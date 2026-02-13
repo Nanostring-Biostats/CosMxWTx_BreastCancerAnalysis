@@ -1,0 +1,170 @@
+# Pathways - AUCell
+
+In this section we use AUCell to calculate pathway activity across thousands of pathways. We use pathways found in the Reactome database for this analysis.
+
+```{r}
+#| label: loading preamble
+#| echo: false
+#| warning: false
+#| message: false
+source("./preamble.R")
+```
+
+AUCell operates independently on cells and on pathways, so we use chunking of our dataset to run all these calculations.
+
+```{r}
+#| label: run_aucell
+#| echo: true
+#| warning: false
+#| message: true
+#| eval: false
+
+# Read in gene sets and chunk for processing
+# original location: gene.sets <- readRDS("~/data/dan/imputation_smoothing/breast_reanalysis/gene.sets.list.rds")[["human"]]
+gene.sets <- readRDS(paste0(pathway_dir, "/Data/gene.sets.list.rds"))[["human"]]
+chunks <- data.table(strt=unique(c(seq(1, length(gene.sets), 100), length(gene.sets))))
+chunks[,stp:=data.table::shift(strt, 1, type="lead")]
+chunks <- chunks[-c(.N)]
+chunks[1:(.N-1),stp:=stp-1]
+
+# if there's no seurat object, read it in
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+# Extract normalized data and meta data
+tc <- Matrix::colSums(seu.obj[["RNA"]]@counts)
+scale.factor <- mean(tc)
+normed <- seu.obj[["RNA"]]@counts %*% Matrix::Diagonal(x = scale.factor / tc, names = TRUE)
+met <- data.table(seu.obj@meta.data)
+
+# Calculate median diversity percentile
+median_diversity_pctile <- median(met$nFeature_RNA) / nrow(normed)
+
+
+##############################################################################
+## Run AUCell by chunks of cells
+##############################################################################
+
+cells <- met[["cell_ID"]]
+cellchunks <- data.table(cells)[,chunk:=floor((1:.N)/20000) + 1][]
+for(ii in 1:cellchunks[,max(chunk)]){
+
+  message(ii)
+  cellsscore <- cellchunks[chunk==ii][["cells"]]
+  chunk_counts <- normed[,cellsscore]
+  set.seed(250404)
+  cells_rankings <- AUCell::AUCell_buildRankings(exprMat=as(chunk_counts, "dgCMatrix"), 
+                                                 ,plotStats = FALSE
+                                                 ,splitByBlocks = TRUE
+                                                 ,BPPARAM = BiocParallel::MulticoreParam(workers = 3)
+                                                 
+  )
+  
+  saveRDS(cells_rankings, paste0(pathway_dir, "/Data/cells_ranking_cellchunk_", ii, ".rds"))
+  
+  pb <- txtProgressBar(min = 0, max = nrow(chunks), style=3) 
+  for(chunky in 1:nrow(chunks)){
+
+    message(chunky)
+    strt <- chunks[chunky,strt]
+    stp <- chunks[chunky,stp]
+    #run aucell for all gene sets 
+    reschunk <- AUCell::AUCell_calcAUC(geneSets=gene.sets[strt:stp], cells_rankings, 
+                                       aucMaxRank=ceiling(nrow(cells_rankings)*median_diversity_pctile), verbose = TRUE,
+                                       nCores = 4,
+                                      
+    )
+    reschunk <- as(reschunk@assays@data$AUC, "sparseMatrix")
+    setTxtProgressBar(pb, chunky)
+    saveRDS(reschunk, file=paste0(pathway_dir, "/Data/cellsAUC_"
+                                  ,".cellschunk__",ii
+                                  ,".chunk__",chunky
+                                  ,".rds")
+            )
+    
+    rm(reschunk); gc()
+  } 
+  gc()
+    
+}
+
+# Join all cells and pathways to one matrix
+cells_auc_full <- NULL
+for(ii in 1:cellchunks[,max(chunk)]){
+  
+  cells_auc_mtx <- readRDS(file=paste0(pathway_dir, "/Data/cellsAUC_"
+                                       ,".cellschunk__",ii
+                                       ,".chunk__","1"
+                                       ,".rds"))
+  
+  for(chunky in 2:nrow(chunks)){
+    
+    temp_mtx <- readRDS(file=paste0(pathway_dir, "/Data/cellsAUC_"
+                                    ,".cellschunk__",ii
+                                    ,".chunk__",chunky
+                                    ,".rds"))
+    cells_auc_mtx <- rbind(cells_auc_mtx, temp_mtx)
+  }
+  
+  if(is.null(cells_auc_full)){
+    cells_auc_full <- cells_auc_mtx
+  } else{
+    cells_auc_full <- cbind(cells_auc_full, cells_auc_mtx)
+  }
+}
+
+saveRDS(cells_auc_full, file = paste0(pathway_dir, "/Data/cellsAUC_"
+                                      ,"full"
+                                      ,".rds"))
+```
+
+Make a heatmap of the top pathways by tumor subtype.
+```{r}
+#| label: plot_tumors_topPathways
+#| echo: true
+#| warning: false
+#| message: true
+#| eval: false
+
+# if there's no seurat object, read it in
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+met = as.data.table(seu.obj@meta.data)
+
+# Read in cells x pathways score matrix, pathway data (pwd)
+pwd <- readRDS(file = paste0(pathway_dir, "/Data/cellsAUC_"
+                                      ,"full"
+                                      ,".rds"))
+
+## Heatmap of top differentiating pathways by tumor type
+tum_cells <- seu.obj$cell_id[grep("tumor", seu.obj$minor_cell_type)]
+
+pwfctbl_tum <- 
+        smiSmooth::clusterwise_foldchange_metrics(normed = pwd[,tum_cells]
+                                     ,metadata = met[cell_ID %in% tum_cells,.(minor_cell_type, cell_ID)]
+                                     ,cluster_column = "minor_cell_type")
+# Save it
+saveRDS(pwfctbl_tum, file = paste0(pathway_dir, "/Data/pwfctbl_tum.rds"))
+
+# Change pathway names
+pwfctbl_tum$gene <- gsub("REACTOME_", "", pwfctbl_tum$gene)
+
+# Make a heatmap showing top differentiating pathway by cell type
+png(filename = paste0(pathway_dir, "/Plots/heatmap_pathways_by_cell_type_tumors.png"),
+    height = 6, width = 10, units = "in", res = 300)
+smiSmooth::marker_heatmap(pwfctbl_tum, topn=5) + coord_flip()
+dev.off()
+
+```
+
+Heatmap of top pathways by tumor subtype:
+```{r}
+knitr::include_graphics(paste0(pathway_dir, "/Plots/heatmap_pathways_by_cell_type_tumors.png"))
+```
+
+
+
+
+

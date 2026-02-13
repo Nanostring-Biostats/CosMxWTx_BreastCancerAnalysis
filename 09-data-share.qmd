@@ -1,0 +1,82 @@
+# Data collation
+
+In this section, we write various cell metadata to a csv for public sharing of the data.
+
+```{r}
+#| label: loading preamble
+#| echo: false
+#| warning: false
+#| message: false
+
+source("./preamble.R")
+```
+
+## Key metadata
+We read in key metadata from various files, store it in one data frame, and write it to a csv.
+
+```{r}
+#| label: merge_metadata
+#| echo: true
+#| warning: false
+#| message: true
+#| eval: false
+
+# if there's no seurat object, read it in
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+#cell ID, major cell type, minor cell type, x/y positions from Seurat file
+meta = seu.obj@meta.data[,c("cell_ID", "x_slide_mm", "y_slide_mm", "major_cell_type", "minor_cell_type")]
+
+# Novae domain
+novae_9 <- readRDS(paste0(niche_dir, "/Data/novae_domains_9_namedAssignments.rds"))
+meta$novaeDomain <- novae_9[rownames(meta)]
+
+# Tumor lobe designation
+meta$tumorLobe <- NA
+meta[results_list$upper_lobe_cells, "tumorLobe"] <- "Interdigitated"
+meta[results_list$lower_lobe_cells, "tumorLobe"] <- "Dense"
+
+# Smoothed pathway scores in tumor cells
+key_pathways = c("JAK-STAT" = "REACTOME_GENE_AND_PROTEIN_EXPRESSION_BY_JAK_STAT_SIGNALING_AFTER_INTERLEUKIN_12_STIMULATION",
+                 "MHC-1" = "REACTOME_ANTIGEN_PRESENTATION_FOLDING_ASSEMBLY_AND_PEPTIDE_LOADING_OF_CLASS_I_MHC",
+                 "NF-kappa B" = "REACTOME_REGULATION_OF_NF_KAPPA_B_SIGNALING",
+                 "TNF" = "REACTOME_TNF_SIGNALING"
+)
+
+idx = which(meta$major_cell_type == "Tumor")
+  
+# Gather score for each pathway
+for(i in 1:4){
+  pathway = key_pathways[i]
+  
+  # Read in smoothed pathway scores
+  smoothed_path_score <- readRDS(file = paste0(immNeigh_dir, "/Data/xy_smoothed_tumor_", pathway, ".rds"))
+  meta[,paste0(gsub("-", "_", names(key_pathways[i])), "SmoothScore_Tumor")] <- NA
+  meta[idx,paste0(gsub("-", "_", names(key_pathways[i])), "SmoothScore_Tumor")] <- smoothed_path_score[1,rownames(meta[idx,])]
+}
+
+# Distance to vasculature
+dist2vessel <-readRDS(file = paste0(vessel_dir, "/Data/dist2vessel.rds"))
+meta$VesselDistance <- dist2vessel[,1]
+
+# Neighborhood glycolysis score
+smoothed_glyc <- readRDS(file = paste0(metabolism_dir, "/Data/xy_smoothed_glycolysis.rds"))
+meta$neighborhoodGlycolysis <- smoothed_glyc[1,rownames(meta)]
+
+# Cell cycle prediction
+cellcycle <- readRDS(paste0(prolif_dir, "/Data/cell_cycle_predictions.rds"))
+meta$cellCyclePrediction <- cellcycle[rownames(meta)]
+
+# Patch assignment for proliferation DE
+meta$PatchAssignment <- NA
+patches <- readRDS(paste0(prolif_dir, "/Data/patchDE.RDS"))
+meta[names(patches), "PatchAssignment"] <- patches
+
+
+write.csv(meta, file = paste0(objects_dir, "/derivedMetadata.csv"))
+
+
+```
+

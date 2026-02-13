@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>4&nbsp; Major tumor lobe differences – Breast cancer through the lens of whole transcriptome spatial imaging</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./05-immuneLandscape.html" rel="next">
+<link href="./03-spatialDomains.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e56c01c6c77634fdd9684df21d95559d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" "=""></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').prepend('<div class=\"zoomDiv\"><img src=\"\" class=\"zoomImg\"></div>');
+    // onClick function for all plots (img's)
+    $('img:not(.zoomImg)').click(function() {
+      $('.zoomImg').attr('src', $(this).attr('src')).css({width: '80%'});
+      $('.zoomDiv').css({opacity: '1', width: 'auto', border: '1px solid white', borderRadius: '5px', position: 'fixed', top: '50%', left: '50%', marginRight: '-50%', transform: 'translate(-50%, -50%)', boxShadow: '0px 0px 50px #888888', zIndex: '50', overflow: 'auto', maxHeight: '100%'});
+    });
+    // onClick function for zoomImg
+    $('img.zoomImg').click(function() {
+      $('.zoomDiv').css({opacity: '0', width: '0%'}); 
+    });
+  });
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="././Images/logo_Bruker_white.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Breast cancer through the lens of whole transcriptome spatial imaging</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="./Breast-cancer-through-the-lens-of-whole-transcriptome-spatial-imaging.pdf">
+              <i class="bi bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="./Breast-cancer-through-the-lens-of-whole-transcriptome-spatial-imaging.epub">
+              <i class="bi bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04-majorTumorLobeDifferences.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Major tumor lobe differences</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="././Images/logo_Bruker_black.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-preprocessing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Data Preprocessing</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-pathways.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Pathways - AUCell</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-spatialDomains.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial domains</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-majorTumorLobeDifferences.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Major tumor lobe differences</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-immuneLandscape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Immune landscape</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-angiogenesis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Angiogenesis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-glycolysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Glycolysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-proliferation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Low-proliferation zones</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-data-share.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Data collation</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#identify-tumor-lobes" id="toc-identify-tumor-lobes" class="nav-link active" data-scroll-target="#identify-tumor-lobes"><span class="header-section-number">4.1</span> Identify tumor lobes</a></li>
+  <li><a href="#contrast-tumor-lobes---cell-types" id="toc-contrast-tumor-lobes---cell-types" class="nav-link" data-scroll-target="#contrast-tumor-lobes---cell-types"><span class="header-section-number">4.2</span> Contrast tumor lobes - cell types</a></li>
+  <li><a href="#contrast-tumor-lobes---differential-expression" id="toc-contrast-tumor-lobes---differential-expression" class="nav-link" data-scroll-target="#contrast-tumor-lobes---differential-expression"><span class="header-section-number">4.3</span> Contrast tumor lobes - differential expression</a></li>
+  <li><a href="#publication-quality-plots" id="toc-publication-quality-plots" class="nav-link" data-scroll-target="#publication-quality-plots"><span class="header-section-number">4.4</span> Publication Quality Plots</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Major tumor lobe differences</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>In this section we look to identify the major transcriptional differences between tumor cells in the lower dense lobe and tumor cells in the upper interdigitated lobe of the tumor.</p>
+<section id="identify-tumor-lobes" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="identify-tumor-lobes"><span class="header-section-number">4.1</span> Identify tumor lobes</h2>
+<p>We first manually define the two main regions of the tumor - the bottom dense, localized lobe as well as the upper interdigitated lobe.</p>
+<p>Manually draw a polygon around the lower localized tumor lobe.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if there's no seurat object, read it in</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>(<span class="st">"seu.obj"</span> <span class="sc">%in%</span> <span class="fu">ls</span>())){</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  seu.obj <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(results_list<span class="sc">$</span>seurat_file_postCellTyping)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">is.null</span>(results_list<span class="sc">$</span>lower_lobe_cells)){</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Select outermost ring of cells to consider</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Define a polygon selection function</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  euclidean <span class="ot">&lt;-</span> <span class="cf">function</span>(a, b) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sqrt</span>(<span class="fu">sum</span>((a <span class="sc">-</span> b)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  select_polygon <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">distmin =</span> <span class="fl">0.01</span>, <span class="at">max_points =</span> <span class="dv">40</span>){</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">"Please select points to define a polygon.  Click to the first point to stop.  First point marker is largest."</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    lims <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="st">"usr"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    margins <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="st">"plt"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    calcX <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">limitss =</span> lims, <span class="at">mars =</span> margins) limitss[<span class="dv">1</span>] <span class="sc">+</span> ((x<span class="sc">-</span>mars[<span class="dv">1</span>])<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">-</span>mars[<span class="dv">2</span>])<span class="sc">-</span>mars[<span class="dv">1</span>]))<span class="sc">*</span>(limitss[<span class="dv">2</span>]<span class="sc">-</span>limitss[<span class="dv">1</span>])</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    calcY <span class="ot">&lt;-</span> <span class="cf">function</span>(y, <span class="at">limitss =</span> lims, <span class="at">mars =</span> margins) limitss[<span class="dv">3</span>] <span class="sc">+</span> ((y<span class="sc">-</span>mars[<span class="dv">3</span>])<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>(<span class="dv">1</span><span class="sc">-</span>mars[<span class="dv">4</span>])<span class="sc">-</span>mars[<span class="dv">3</span>]))<span class="sc">*</span>(limitss[<span class="dv">4</span>]<span class="sc">-</span>limitss[<span class="dv">3</span>])</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    calcXY <span class="ot">&lt;-</span> <span class="cf">function</span>(z) <span class="fu">c</span>(<span class="fu">calcX</span>(z[<span class="dv">1</span>]), <span class="fu">calcY</span>(z[<span class="dv">2</span>]))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># determine diagonal distance in the plotting coordinate frame</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    diagonalDist <span class="ot">&lt;-</span> <span class="fu">euclidean</span>(lims[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)], lims[<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>)])</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># select first and second point and third point</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    pg <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">nrow =</span> <span class="dv">1</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    pg[<span class="dv">1</span>, ] <span class="ot">&lt;-</span> <span class="fu">calcXY</span>(<span class="fu">unlist</span>(grid<span class="sc">::</span><span class="fu">grid.locator</span>(<span class="at">unit =</span> <span class="st">"npc"</span>)))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">points</span>(pg[<span class="dv">1</span>,<span class="dv">1</span>], pg[<span class="dv">1</span>,<span class="dv">2</span>], <span class="at">cex =</span> <span class="dv">1</span>, <span class="at">pch =</span> <span class="dv">9</span>, <span class="at">col =</span> <span class="st">"magenta"</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    pg <span class="ot">&lt;-</span> <span class="fu">rbind</span>(pg, <span class="fu">calcXY</span>(<span class="fu">unlist</span>(grid<span class="sc">::</span><span class="fu">grid.locator</span>(<span class="at">unit =</span> <span class="st">"npc"</span>))))</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">points</span>(pg[<span class="fu">nrow</span>(pg),<span class="dv">1</span>], pg[<span class="fu">nrow</span>(pg),<span class="dv">2</span>], <span class="at">cex =</span> <span class="fl">0.5</span>, <span class="at">pch =</span> <span class="dv">9</span>, <span class="at">col =</span> <span class="st">"magenta"</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    pg <span class="ot">&lt;-</span> <span class="fu">rbind</span>(pg, <span class="fu">calcXY</span>(<span class="fu">unlist</span>(grid<span class="sc">::</span><span class="fu">grid.locator</span>(<span class="at">unit =</span> <span class="st">"npc"</span>))))</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">points</span>(pg[<span class="fu">nrow</span>(pg),<span class="dv">1</span>], pg[<span class="fu">nrow</span>(pg),<span class="dv">2</span>], <span class="at">cex =</span> <span class="fl">0.5</span>, <span class="at">pch =</span> <span class="dv">9</span>, <span class="at">col =</span> <span class="st">"magenta"</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">#select additional points until a point is within the desired distance of the original point (or hit max_points limit)</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span>(<span class="fu">euclidean</span>(pg[<span class="fu">nrow</span>(pg),], pg[<span class="dv">1</span>,]) <span class="sc">&gt;</span> distmin<span class="sc">*</span>diagonalDist){</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>      pg <span class="ot">&lt;-</span> <span class="fu">rbind</span>(pg, <span class="fu">calcXY</span>(<span class="fu">unlist</span>(grid<span class="sc">::</span><span class="fu">grid.locator</span>(<span class="at">unit =</span> <span class="st">"npc"</span>))))</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>      <span class="fu">points</span>(pg[<span class="fu">nrow</span>(pg),<span class="dv">1</span>], pg[<span class="fu">nrow</span>(pg),<span class="dv">2</span>], <span class="at">cex =</span> <span class="fl">0.5</span>, <span class="at">pch =</span> <span class="dv">9</span>, <span class="at">col =</span> <span class="st">"magenta"</span>)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">nrow</span>(pg) <span class="sc">&gt;</span> max_points) {</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>        <span class="fu">message</span>(<span class="st">"You reached the max allowed points."</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">nrow</span>(pg) <span class="sc">&gt;</span> <span class="dv">3</span>) pg <span class="ot">&lt;-</span> pg[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">nrow</span>(pg)<span class="sc">-</span><span class="dv">1</span>),]</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">polygon</span>(pg[,<span class="dv">1</span>],pg[,<span class="dv">2</span>],<span class="at">col=</span><span class="st">"#00000007"</span>,<span class="at">border=</span><span class="st">"red"</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(pg)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Plot cells in bottom of tumor</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(seu.obj<span class="sc">@</span>meta.data<span class="sc">$</span>x_slide_mm, </span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>       seu.obj<span class="sc">@</span>meta.data<span class="sc">$</span>y_slide_mm, </span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.01</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="dv">6</span>), </span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>       <span class="at">asp=</span><span class="dv">1</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>))</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Select outer tumor edge polygon manually</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  pg_outer <span class="ot">&lt;-</span> <span class="fu">select_polygon</span>()</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># which points are within the polygon</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  idx_selected <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">in.out</span>(pg_outer, <span class="fu">as.matrix</span>(seu.obj<span class="sc">@</span>meta.data[,<span class="fu">c</span>(<span class="st">"x_slide_mm"</span>,<span class="st">"y_slide_mm"</span>)] ))</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  outer_cells <span class="ot">&lt;-</span> seu.obj<span class="sc">@</span>meta.data<span class="sc">$</span>cell_id[idx_selected]</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add to results list</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>  results_list<span class="sc">$</span>lower_lobe_cells <span class="ot">&lt;-</span> outer_cells</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(results_list, results_list_file)</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Manually draw a polygon around the upper interdigitated tumor lobe.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>(<span class="st">"seu.obj"</span> <span class="sc">%in%</span> <span class="fu">ls</span>())){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  seu.obj <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(results_list<span class="sc">$</span>seurat_file_postCellTyping)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">is.null</span>(results_list<span class="sc">$</span>upper_lobe_cells)){</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="do">## Select outermost ring of cells to consider</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use function from above</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot cells in upper region of slide</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot</span>(seu.obj<span class="sc">@</span>meta.data<span class="sc">$</span>x_slide_mm, </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>         seu.obj<span class="sc">@</span>meta.data<span class="sc">$</span>y_slide_mm, </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">cex =</span> <span class="fl">0.01</span>,  <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">16</span>),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">asp=</span><span class="dv">1</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="fl">0.1</span>))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select outer tumor edge polygon manually</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    pg_outer <span class="ot">&lt;-</span> <span class="fu">select_polygon</span>()</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># which points are within the polygon</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    idx_selected <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">in.out</span>(pg_outer, <span class="fu">as.matrix</span>(seu.obj<span class="sc">@</span>meta.data[,<span class="fu">c</span>(<span class="st">"x_slide_mm"</span>,<span class="st">"y_slide_mm"</span>)] ))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    cells_in_upper <span class="ot">&lt;-</span> seu.obj<span class="sc">@</span>meta.data<span class="sc">$</span>cell_id[idx_selected]</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add to results list</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  results_list<span class="sc">$</span>upper_lobe_cells <span class="ot">&lt;-</span> cells_in_upper</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(results_list, results_list_file)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Plot cells in upper and lower lobes individually or simultaneously.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>(<span class="st">"seu.obj"</span> <span class="sc">%in%</span> <span class="fu">ls</span>())){</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  seu.obj <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(results_list<span class="sc">$</span>seurat_file_postCellTyping)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot upper</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(seu.obj<span class="sc">@</span>meta.data,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> x_slide_mm, <span class="at">y =</span> y_slide_mm)) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"light grey"</span>, <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> seu.obj<span class="sc">@</span>meta.data[results_list<span class="sc">$</span>upper_lobe_cells,],</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x_slide_mm, <span class="at">y =</span> y_slide_mm),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"tomato3"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Cells in the upper lobulated region"</span>) <span class="sc">+</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/XY_upperLobe.png"</span>),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="dv">16</span>, <span class="at">height =</span> <span class="dv">16</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot lower</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(seu.obj<span class="sc">@</span>meta.data,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> x_slide_mm, <span class="at">y =</span> y_slide_mm)) <span class="sc">+</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"light grey"</span>, <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> seu.obj<span class="sc">@</span>meta.data[results_list<span class="sc">$</span>lower_lobe_cells,],</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x_slide_mm, <span class="at">y =</span> y_slide_mm),</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"lightskyblue3"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Cells in the lower localized region"</span>) <span class="sc">+</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/XY_lowerLobe.png"</span>),</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="dv">16</span>, <span class="at">height =</span> <span class="dv">16</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot both together</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(seu.obj<span class="sc">@</span>meta.data,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> x_slide_mm, <span class="at">y =</span> y_slide_mm)) <span class="sc">+</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"light grey"</span>, <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> seu.obj<span class="sc">@</span>meta.data[results_list<span class="sc">$</span>lower_lobe_cells,],</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x_slide_mm, <span class="at">y =</span> y_slide_mm),</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"lightskyblue3"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> seu.obj<span class="sc">@</span>meta.data[results_list<span class="sc">$</span>upper_lobe_cells,],</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> x_slide_mm, <span class="at">y =</span> y_slide_mm),</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fl">0.01</span>, <span class="at">color =</span> <span class="st">"tomato3"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Cells in the two tumor lobes"</span>) <span class="sc">+</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/XY_bothLobes.png"</span>),</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="dv">16</span>, <span class="at">height =</span> <span class="dv">16</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Spatial plots of major lobes.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Both lobes</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Lower lobe</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Upper lobe</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/XY_bothLobes.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/XY_bothLobes.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/XY_lowerLobe.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/XY_lowerLobe.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/XY_upperLobe.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/XY_upperLobe.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="contrast-tumor-lobes---cell-types" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="contrast-tumor-lobes---cell-types"><span class="header-section-number">4.2</span> Contrast tumor lobes - cell types</h2>
+<p>As a next basic step, we show cell type distributions in each lobe.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>(<span class="st">"seu.obj"</span> <span class="sc">%in%</span> <span class="fu">ls</span>())){</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  seu.obj <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(results_list<span class="sc">$</span>seurat_file_postCellTyping)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Isolate meta for plotting</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> seu.obj<span class="sc">@</span>meta.data</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Add lobe assignments</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>lobe <span class="ot">&lt;-</span> <span class="st">"none"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>meta[results_list<span class="sc">$</span>upper_lobe_cells, <span class="st">"lobe"</span>] <span class="ot">&lt;-</span> <span class="st">"Upper"</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>meta[results_list<span class="sc">$</span>lower_lobe_cells, <span class="st">"lobe"</span>] <span class="ot">&lt;-</span> <span class="st">"Lower"</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot cell types by lobe</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(meta[<span class="fu">which</span>(meta<span class="sc">$</span>lobe <span class="sc">!=</span> <span class="st">"none"</span>),], </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> minor_cell_type)) <span class="sc">+</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">fill =</span> minor_cell_type), <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> results_list<span class="sc">$</span>minor_cell_type_color_pal, <span class="at">name =</span> <span class="st">"Cell Type"</span>) <span class="sc">+</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Cell Type"</span>) <span class="sc">+</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Total cells"</span>) <span class="sc">+</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>lobe)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/Barplot_cellsPerCellType_byLobe.png"</span>),</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">width =</span> <span class="dv">16</span>, <span class="at">height =</span> <span class="dv">8</span>, <span class="at">unit =</span> <span class="st">"in"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The major tumor type contributing to the top tumor are HPD+ tumor. In contrast, the major tumor type in the bottom tumor are KRT16+ and proliferating tumor.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/Barplot_cellsPerCellType_byLobe.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/Barplot_cellsPerCellType_byLobe.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="contrast-tumor-lobes---differential-expression" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="contrast-tumor-lobes---differential-expression"><span class="header-section-number">4.3</span> Contrast tumor lobes - differential expression</h2>
+<p>We use differential expression to contrast tumor cells in the two lobes, using only genes that are more likely to be expressed in tumor cells than surrounding cells (ie are unlikely to be present simply due to tumor cells overlapping with non-tumor cells at their borders).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>(<span class="st">"seu.obj"</span> <span class="sc">%in%</span> <span class="fu">ls</span>())){</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  seu.obj <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(results_list<span class="sc">$</span>seurat_file_postCellTyping)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Isolate meta for plotting</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> seu.obj<span class="sc">@</span>meta.data</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Add lobe assignments</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>lobe <span class="ot">&lt;-</span> <span class="st">"none"</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>meta[results_list<span class="sc">$</span>upper_lobe_cells, <span class="st">"lobe"</span>] <span class="ot">&lt;-</span> <span class="st">"Upper"</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>meta[results_list<span class="sc">$</span>lower_lobe_cells, <span class="st">"lobe"</span>] <span class="ot">&lt;-</span> <span class="st">"Lower"</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Run DE between tumor lobes on tumor cells only</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Pre-de find neighbors</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>pre_de_obj <span class="ot">&lt;-</span> <span class="fu">pre_de</span>(</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">metadata =</span> meta,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">cell_type_metadata_colname =</span> <span class="st">"major_cell_type"</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">mm_radius =</span> <span class="fl">0.05</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">sdimx_colname =</span> <span class="st">"x_slide_mm"</span>,</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">sdimy_colname =</span> <span class="st">"y_slide_mm"</span>,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">adjacencies_only =</span> <span class="cn">TRUE</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Add total counts to metadata as DE expects</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>meta<span class="sc">$</span>totalcounts <span class="ot">=</span> meta<span class="sc">$</span>nCount_RNA</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Use overlap metric to identify genes to test</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>overlap_metrics <span class="ot">&lt;-</span> </span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>smiDE<span class="sc">::</span><span class="fu">overlap_ratio_metric</span>(<span class="at">assay_matrix =</span> seu.obj<span class="sc">@</span>assays<span class="sc">$</span>RNA<span class="sc">$</span>data,</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>                           <span class="at">metadata =</span> meta,</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>                           <span class="at">cluster_col =</span> <span class="st">"major_cell_type"</span>,</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>                           <span class="at">radius =</span> <span class="fl">0.05</span>,</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>                           <span class="co">#split_neighbors_by_colname = "Run_Tissue_name",</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sdimx_col =</span> <span class="st">"x_slide_mm"</span>,</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sdimy_col =</span> <span class="st">"y_slide_mm"</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>                           )</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Save overlap metrics</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(overlap_metrics, <span class="at">file =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/overlap_metrics.rds"</span>))</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Only analyze genes with ratio less than or equal to 1</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>analysis_genes <span class="ot">&lt;-</span> overlap_metrics[major_cell_type<span class="sc">==</span><span class="st">"Tumor"</span> <span class="sc">&amp;</span> ratio <span class="sc">&lt;=</span> <span class="dv">1</span>]<span class="sc">$</span>target</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a><span class="co"># DE test dependence on tumor lobe</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>de_obj <span class="ot">&lt;-</span> <span class="fu">smi_de</span>(</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">assay_matrix =</span> seu.obj<span class="sc">@</span>assays<span class="sc">$</span>RNA<span class="sc">@</span>counts[analysis_genes,],</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">metadata =</span> meta[<span class="fu">which</span>(meta[,<span class="st">"major_cell_type"</span>] <span class="sc">==</span> <span class="st">"Tumor"</span>),],</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="sc">~</span><span class="fu">RankNorm</span>(otherct_expr) <span class="sc">+</span> lobe <span class="sc">+</span> <span class="fu">offset</span>(<span class="fu">log</span>(totalcounts)),</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">pre_de_obj =</span> pre_de_obj,</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">groupVar =</span> <span class="st">"lobe"</span>,</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">neighbor_expr_cell_type_metadata_colname =</span> <span class="st">"major_cell_type"</span>,</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">neighbor_expr_totalcount_normalize =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>  <span class="at">neighbor_expr_totalcount_scalefactor =</span> <span class="cn">NULL</span>,</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">"nbinom2"</span>,</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">targets =</span> analysis_genes,</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">nCores =</span> <span class="dv">20</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Save objects</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pre_de_obj, <span class="at">file =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/pre_de_obj.rds"</span>))</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(de_obj, <span class="at">file =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/de_obj_tumorGenes.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>With the major differences between tumor cells in the two lobes, we first generate a volcano plot to visually demonstrate the vast differences between these two lobes. Also save these results to a table.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in DE object</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>de_obj <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/de_obj_tumorGenes.rds"</span>))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract pairwise results, invasive vs localized lobe</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>pairwise.df <span class="ot">&lt;-</span> <span class="fu">results</span>(de_obj, <span class="st">"pairwise"</span>)<span class="sc">$</span>pairwise</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>pairwise.df <span class="ot">&lt;-</span> pairwise.df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"lobe"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"Lower / Upper"</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert terminology to Dense / Interdigitated</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>pairwise.df<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"Lower / Upper"</span>, <span class="st">"Dense / Interdigitated"</span>, pairwise.df<span class="sc">$</span>contrast)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust p-value</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>pairwise.df<span class="sc">$</span>p.adj <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(pairwise.df<span class="sc">$</span>p.value, <span class="at">method =</span> <span class="st">"fdr"</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Save pairwise results to a table to be included as supplementary information.</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="fu">as.data.frame</span>(pairwise.df)[,<span class="fu">c</span>(<span class="fu">setdiff</span>(<span class="fu">colnames</span>(pairwise.df), <span class="fu">c</span>(<span class="st">"df"</span>, <span class="st">"null"</span>, <span class="st">"fold_change"</span>)))],</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>          <span class="at">file =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/TumorLobeDE_table.csv"</span>),</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>          <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot it, partially following smiDE volcano code</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure that the lower lobe is plotted on the left to align with tissue image</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract comparison</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>cc <span class="ot">=</span> pairwise.df<span class="sc">$</span>contrast[<span class="dv">1</span>]</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>compv <span class="ot">=</span> compv <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(<span class="fu">as.character</span>(cc), <span class="st">"</span><span class="sc">\\</span><span class="st"> vs.</span><span class="sc">\\</span><span class="st"> "</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">grepl</span>(<span class="st">" [</span><span class="sc">\\</span><span class="st">/-]</span><span class="sc">\\</span><span class="st"> "</span>, cc)) compv <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(<span class="fu">as.character</span>(cc), <span class="st">"</span><span class="sc">\\</span><span class="st"> [</span><span class="sc">\\</span><span class="st">/-]</span><span class="sc">\\</span><span class="st"> "</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co"># x labels</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>xrng <span class="ot">&lt;-</span> pairwise.df[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">log2</span>(fold_change)),<span class="fu">c</span>(<span class="fu">min</span>(<span class="sc">-</span><span class="fu">log2</span>(fold_change)),<span class="fu">max</span>(<span class="sc">-</span><span class="fu">log2</span>(fold_change)))]</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>xrng <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fu">max</span>(<span class="fu">abs</span>(xrng)), <span class="fu">max</span>(<span class="fu">abs</span>(xrng)))</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>xrng <span class="ot">&lt;-</span> <span class="fu">pretty</span>(xrng)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up y labels</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>nDigits <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">suppressWarnings</span>(<span class="fu">as.integer</span>(<span class="fu">strsplit</span>(<span class="at">x =</span> <span class="fu">formatC</span>(<span class="fu">formatC</span>(<span class="at">x =</span> x, <span class="at">format=</span><span class="st">"e"</span>), <span class="at">format =</span> <span class="st">"s"</span>), <span class="at">split =</span> <span class="st">"e"</span>)[[<span class="dv">1</span>]][<span class="dv">2</span>]))</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>bonf<span class="ot">&lt;-</span> pairwise.df[,<span class="fl">0.05</span><span class="sc">/</span>(<span class="fu">uniqueN</span>(target) <span class="sc">*</span> <span class="fu">uniqueN</span>(contrast))]</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>max.y <span class="ot">&lt;-</span> <span class="fu">nDigits</span>(<span class="fu">min</span>(pairwise.df[,<span class="fu">min</span>(p.value)<span class="sc">+</span><span class="dv">10</span><span class="sc">^-</span><span class="dv">300</span>], <span class="fu">signif</span>(bonf <span class="sc">/</span> <span class="dv">2</span>, <span class="dv">1</span>)))</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>ybrk <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">*</span> <span class="dv">10</span><span class="sc">^</span><span class="fu">pretty</span>( <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">:</span>(max.y)) )</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>ylab <span class="ot">&lt;-</span> ybrk</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Add coloring</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>fc_cutoff <span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>pairwise.df<span class="sc">$</span>sig_group <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"P adj &gt; 0.05</span><span class="sc">\n</span><span class="st">and/or</span><span class="sc">\n</span><span class="st">log2FC &lt; "</span>, fc_cutoff)</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>pairwise.df<span class="sc">$</span>sig_group[<span class="fu">intersect</span>(<span class="fu">which</span>(pairwise.df<span class="sc">$</span>p.adj <span class="sc">&lt;</span> <span class="fl">0.05</span>),</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">which</span>(<span class="fu">log2</span>(pairwise.df<span class="sc">$</span>fold_change) <span class="sc">&gt;</span> fc_cutoff))] <span class="ot">&lt;-</span> compv[<span class="dv">1</span>]</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>pairwise.df<span class="sc">$</span>sig_group[<span class="fu">intersect</span>(<span class="fu">which</span>(pairwise.df<span class="sc">$</span>p.adj <span class="sc">&lt;</span> <span class="fl">0.05</span>),</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">which</span>(<span class="fu">log2</span>(pairwise.df<span class="sc">$</span>fold_change) <span class="sc">&lt;</span> <span class="sc">-</span>fc_cutoff))] <span class="ot">&lt;-</span> compv[<span class="dv">2</span>]</span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>my_cols <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"tomato3"</span>, <span class="st">"lightskyblue3"</span>, <span class="st">"lightgrey"</span>)</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(my_cols) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Interdigitated"</span>,</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Dense"</span>,</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">paste0</span>(<span class="st">"P adj &gt; 0.05</span><span class="sc">\n</span><span class="st">and/or</span><span class="sc">\n</span><span class="st">log2FC &lt; "</span>, fc_cutoff))</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pairwise.df,</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="fu">log2</span>(fold_change), <span class="at">y =</span> p.value <span class="sc">+</span> <span class="dv">10</span><span class="sc">^-</span><span class="dv">300</span>)) <span class="sc">+</span> <span class="co"># Negative log fold change switches the L/R order of upper / lower</span></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> fc_cutoff, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="sc">-</span>fc_cutoff, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> sig_group), <span class="at">size =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> my_cols, <span class="at">name =</span> <span class="st">"Significance group"</span>) <span class="sc">+</span></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">trans =</span> smiDE<span class="sc">:::</span><span class="fu">change_axis_revlog_trans</span>(<span class="at">base=</span><span class="dv">10</span>),</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>                     <span class="at">breaks =</span> ybrk,</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">formatC</span>(ylab, <span class="at">format =</span> <span class="st">"e"</span>, <span class="at">digits =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> xrng, <span class="at">limits =</span> <span class="fu">range</span>(xrng)) <span class="sc">+</span></span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"p value"</span>) <span class="sc">+</span></span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="fu">paste0</span>(compv[<span class="dv">1</span>], <span class="st">" "</span>, <span class="fu">sprintf</span>(<span class="st">'\u2190'</span>), <span class="st">" log"</span>, <span class="fu">sprintf</span>(<span class="st">'\u2082'</span>), <span class="st">"(FC) "</span>, <span class="fu">sprintf</span>(<span class="st">'\u2192'</span>), <span class="st">" "</span>, compv[<span class="dv">2</span>]) ) <span class="sc">+</span> <span class="co"># Compv 1 and 2 are switched in order from usual to account for L/R switch of categories</span></span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> pairwise.df[<span class="dv">1</span>,], <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(pairwise.df<span class="sc">$</span>sig_group <span class="sc">==</span> <span class="st">"Interdigitated"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">genes"</span>), </span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">x =</span> <span class="fu">min</span>(<span class="fu">abs</span>(<span class="fu">max</span>(xrng)), <span class="fu">abs</span>(<span class="fu">min</span>(xrng)))<span class="sc">*</span><span class="fl">0.75</span>, <span class="at">y =</span> <span class="fu">sqrt</span>(<span class="fu">min</span>(ybrk))),</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> my_cols[[<span class="st">"Interdigitated"</span>]], <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> pairwise.df[<span class="dv">1</span>,], <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="fu">sum</span>(pairwise.df<span class="sc">$</span>sig_group <span class="sc">==</span> <span class="st">"Dense"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">genes"</span>), </span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">x =</span> <span class="sc">-</span><span class="fu">min</span>(<span class="fu">abs</span>(<span class="fu">max</span>(xrng)), <span class="fu">abs</span>(<span class="fu">min</span>(xrng)))<span class="sc">*</span><span class="fl">0.75</span>, <span class="at">y =</span> <span class="fu">sqrt</span>(<span class="fu">min</span>(ybrk))),</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> my_cols[[<span class="st">"Dense"</span>]], <span class="at">size =</span> <span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size =</span> <span class="dv">5</span>)))</span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/volcano_lobeDifferences_tumorGenes.png"</span>),</span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>       <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/volcano_lobeDifferences_tumorGenes.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/volcano_lobeDifferences_tumorGenes.png" class="img-fluid figure-img" width="900"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Next, we show the 20 genes with the largest fold change between these two lobes.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in DE object</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>de_obj <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/de_obj_tumorGenes.rds"</span>))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract pairwise results, invasive vs localized lobe</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>pairwise.df <span class="ot">&lt;-</span> <span class="fu">results</span>(de_obj, <span class="st">"pairwise"</span>)<span class="sc">$</span>pairwise</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>pairwise.df <span class="ot">&lt;-</span> pairwise.df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"lobe"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"Lower / Upper"</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract 20 genes with top FC</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>top_upper <span class="ot">&lt;-</span> pairwise.df <span class="sc">%&gt;%</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(p.value, <span class="sc">-</span><span class="fu">abs</span>(<span class="fu">log2</span>(fold_change))) <span class="sc">%&gt;%</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fold_change <span class="sc">&lt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(target, contrast, fold_change, p.value, modelest_cpc_1, modelest_cpc_2)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>top_lower <span class="ot">&lt;-</span> pairwise.df <span class="sc">%&gt;%</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(p.value, <span class="sc">-</span><span class="fu">abs</span>(<span class="fu">log2</span>(fold_change))) <span class="sc">%&gt;%</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fold_change <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(target, contrast, fold_change, p.value, modelest_cpc_1, modelest_cpc_2)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Add to results</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>results_list<span class="sc">$</span>top_upper_DE_tumGenes <span class="ot">&lt;-</span> top_upper</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>results_list<span class="sc">$</span>top_lower_DE_tumGenes <span class="ot">&lt;-</span> top_lower</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results_list, results_list_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Top genes in the localized bottom tumor:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(results_list<span class="sc">$</span>top_lower_DE_tumGenes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in attr(x, "align"): 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in attr(x, "format"): 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 19%">
+<col style="width: 16%">
+<col style="width: 10%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">target</th>
+<th style="text-align: left;">contrast</th>
+<th style="text-align: right;">fold_change</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: right;">modelest_cpc_1</th>
+<th style="text-align: right;">modelest_cpc_2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">LY6D</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">10.428261</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.8080269</td>
+<td style="text-align: right;">0.0774843</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ATXN7L3B</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">8.052779</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.1563574</td>
+<td style="text-align: right;">0.1435973</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CDK18</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">7.142504</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.4227569</td>
+<td style="text-align: right;">0.0591889</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PIGR</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">6.770508</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2.0681480</td>
+<td style="text-align: right;">0.3054642</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MX1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">6.144639</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.6164455</td>
+<td style="text-align: right;">0.1003225</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SLC40A1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.756106</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.4995135</td>
+<td style="text-align: right;">0.2605083</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SCGB2A2</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.416474</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.2020308</td>
+<td style="text-align: right;">0.0372993</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ISG15</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.398429</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2.2641238</td>
+<td style="text-align: right;">0.4194042</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TCN1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.346028</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.4542855</td>
+<td style="text-align: right;">0.0849763</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IFI6</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.291030</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6.5143896</td>
+<td style="text-align: right;">1.2312138</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">S100A14</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.222033</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.4212108</td>
+<td style="text-align: right;">0.0806603</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MX2</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.191911</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.3582178</td>
+<td style="text-align: right;">0.0689954</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IFIT1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.140736</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.3951940</td>
+<td style="text-align: right;">0.0768750</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AQP5</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.088901</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.4329085</td>
+<td style="text-align: right;">0.0850691</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FAM83A</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">5.014518</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.8661385</td>
+<td style="text-align: right;">0.1727262</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CRABP2</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">4.933569</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.0489889</td>
+<td style="text-align: right;">0.2126227</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FOXJ1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">4.818482</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.2479773</td>
+<td style="text-align: right;">0.0514638</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B4GALNT4</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">4.746124</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.4869562</td>
+<td style="text-align: right;">0.1026008</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MYH14</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">4.668784</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.2086226</td>
+<td style="text-align: right;">0.0446846</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CCL28</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">4.615145</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.4035318</td>
+<td style="text-align: right;">0.0874364</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Top genes in the interdigitated top tumor:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(results_list<span class="sc">$</span>top_upper_DE_tumGenes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in attr(x, "align"): 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in attr(x, "format"): 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 19%">
+<col style="width: 16%">
+<col style="width: 11%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">target</th>
+<th style="text-align: left;">contrast</th>
+<th style="text-align: right;">fold_change</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: right;">modelest_cpc_1</th>
+<th style="text-align: right;">modelest_cpc_2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">FABP7</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.0412132</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.1547114</td>
+<td style="text-align: right;">3.7539276</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CXCL13</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.0465679</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0516366</td>
+<td style="text-align: right;">1.1088441</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ACSM1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.0614168</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0605494</td>
+<td style="text-align: right;">0.9858759</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HMGCS2</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1092143</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0656530</td>
+<td style="text-align: right;">0.6011394</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ENPP3</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1133575</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0652240</td>
+<td style="text-align: right;">0.5753835</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALOX15B</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1230360</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0920995</td>
+<td style="text-align: right;">0.7485574</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MGP</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1268866</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.2545571</td>
+<td style="text-align: right;">2.0061776</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HPD</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1508734</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0343096</td>
+<td style="text-align: right;">0.2274067</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PLA2G2A</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1513198</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0850009</td>
+<td style="text-align: right;">0.5617302</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CYP1B1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1523463</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.2475903</td>
+<td style="text-align: right;">1.6251813</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ZBTB16</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1606502</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0615880</td>
+<td style="text-align: right;">0.3833669</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CADPS</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1731365</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0280063</td>
+<td style="text-align: right;">0.1617587</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SOCS2</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1854168</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0281759</td>
+<td style="text-align: right;">0.1519598</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PAPSS2</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.1991785</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0654060</td>
+<td style="text-align: right;">0.3283786</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HPGD</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.2054003</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0682522</td>
+<td style="text-align: right;">0.3322889</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MYBPC1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.2109938</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0509307</td>
+<td style="text-align: right;">0.2413849</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PHYHD1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.2165506</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0700166</td>
+<td style="text-align: right;">0.3233269</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">KCNMA1</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.2169414</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0965189</td>
+<td style="text-align: right;">0.4449078</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FMO5</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.2253143</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.1141765</td>
+<td style="text-align: right;">0.5067430</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ALDH3B2</td>
+<td style="text-align: left;">Lower / Upper</td>
+<td style="text-align: right;">0.2367181</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.0871368</td>
+<td style="text-align: right;">0.3681036</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We use ReactomePA to identify pathways enriched in the set of genes up in the interdigitated lobe and in the localized lobe.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in DE object</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>de_obj <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/de_obj_tumorGenes.rds"</span>))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract pairwise results, invasive vs localized lobe</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>pairwise.df <span class="ot">&lt;-</span> <span class="fu">results</span>(de_obj, <span class="st">"pairwise"</span>)<span class="sc">$</span>pairwise</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>pairwise.df <span class="ot">&lt;-</span> pairwise.df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"lobe"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"Lower / Upper"</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert terminology to Dense / Interdigitated</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>pairwise.df<span class="sc">$</span>contrast <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"Lower / Upper"</span>, <span class="st">"Dense / Interdigitated"</span>, pairwise.df<span class="sc">$</span>contrast)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Find pathways enriched in each lobe, working only with those with p.adj &lt; 0.05</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co"># and log2fc &gt; 0.5</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust p-value</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>pairwise.df<span class="sc">$</span>p.adj <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(pairwise.df<span class="sc">$</span>p.value, <span class="at">method =</span> <span class="st">"fdr"</span>)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Find gene sets</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>upper_genes <span class="ot">&lt;-</span> pairwise.df <span class="sc">%&gt;%</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(p.adj <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">log2</span>(fold_change) <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">0.5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(target)</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>lower_genes <span class="ot">&lt;-</span> pairwise.df <span class="sc">%&gt;%</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(p.adj <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">log2</span>(fold_change) <span class="sc">&gt;</span> <span class="fl">0.5</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(target)</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>pathway_res <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"upper_genes"</span>, <span class="st">"lower_genes"</span>)){</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Top pathways in set "</span>, i, <span class="st">":"</span>))</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  gene_ids <span class="ot">&lt;-</span> <span class="fu">bitr</span>(<span class="fu">get</span>(i)<span class="sc">$</span>target, <span class="st">"SYMBOL"</span>, <span class="st">"ENTREZID"</span>, org.Hs.eg.db)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>  enrich_result1 <span class="ot">&lt;-</span> <span class="fu">enrichPathway</span>(<span class="at">gene =</span> gene_ids<span class="sc">$</span>ENTREZID,</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">organism =</span> <span class="st">"human"</span>)</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>  pathway_res[i] <span class="ot">&lt;-</span> enrich_result1</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(enrich_result1<span class="sc">@</span>result[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="fu">c</span>(<span class="st">"Description"</span>, <span class="st">"FoldEnrichment"</span>, <span class="st">"qvalue"</span>)])</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Save pathway results</span></span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pathway_res, <span class="at">file =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/pathwayEnrichmentResults_tumorGenes.rds"</span>))</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Also save top pathways to results file</span></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>results_list<span class="sc">$</span>top_upper_pathways_tumGenes <span class="ot">&lt;-</span> pathway_res[[<span class="st">"upper_genes"</span>]]<span class="sc">@</span>result <span class="sc">%&gt;%</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(qvalue <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"Description"</span>, <span class="st">"FoldEnrichment"</span>, <span class="st">"qvalue"</span>)</span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>results_list<span class="sc">$</span>top_lower_pathways_tumGenes <span class="ot">&lt;-</span> pathway_res[[<span class="st">"lower_genes"</span>]]<span class="sc">@</span>result <span class="sc">%&gt;%</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(qvalue <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"Description"</span>, <span class="st">"FoldEnrichment"</span>, <span class="st">"qvalue"</span>)</span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results_list, results_list_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Top pathways enriched in the localized bottom tumor:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(results_list<span class="sc">$</span>top_lower_pathways_tumGenes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in attr(x, "align"): 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in attr(x, "format"): 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 57%">
+<col style="width: 16%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: right;">FoldEnrichment</th>
+<th style="text-align: right;">qvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-909733</td>
+<td style="text-align: left;">Interferon alpha/beta signaling</td>
+<td style="text-align: right;">4.195286</td>
+<td style="text-align: right;">0.0050355</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-9696264</td>
+<td style="text-align: left;">RND3 GTPase cycle</td>
+<td style="text-align: right;">4.944444</td>
+<td style="text-align: right;">0.0335941</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-9909505</td>
+<td style="text-align: left;">Modulation of host responses by IFN-stimulated genes</td>
+<td style="text-align: right;">7.286550</td>
+<td style="text-align: right;">0.0387607</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Top pathways enriched in the interdigitated top tumor:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(results_list<span class="sc">$</span>top_upper_pathways_tumGenes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in attr(x, "align"): 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in attr(x, "format"): 'xfun::attr()' is deprecated.
+Use 'xfun::attr2()' instead.
+See help("Deprecated")</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 72%">
+<col style="width: 10%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: right;">FoldEnrichment</th>
+<th style="text-align: right;">qvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-71291</td>
+<td style="text-align: left;">Metabolism of amino acids and derivatives</td>
+<td style="text-align: right;">3.449887</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-8978868</td>
+<td style="text-align: left;">Fatty acid metabolism</td>
+<td style="text-align: right;">4.204344</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-1428517</td>
+<td style="text-align: left;">Aerobic respiration and respiratory electron transport</td>
+<td style="text-align: right;">3.207833</td>
+<td style="text-align: right;">0.0000009</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-2408522</td>
+<td style="text-align: left;">Selenoamino acid metabolism</td>
+<td style="text-align: right;">4.477243</td>
+<td style="text-align: right;">0.0000017</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-156902</td>
+<td style="text-align: left;">Peptide chain elongation</td>
+<td style="text-align: right;">4.792308</td>
+<td style="text-align: right;">0.0000111</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-192823</td>
+<td style="text-align: left;">Viral mRNA Translation</td>
+<td style="text-align: right;">4.792308</td>
+<td style="text-align: right;">0.0000111</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-9633012</td>
+<td style="text-align: left;">Response of EIF2AK4 (GCN2) to amino acid deficiency</td>
+<td style="text-align: right;">4.477243</td>
+<td style="text-align: right;">0.0000117</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-156842</td>
+<td style="text-align: left;">Eukaryotic Translation Elongation</td>
+<td style="text-align: right;">4.588380</td>
+<td style="text-align: right;">0.0000130</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-2408557</td>
+<td style="text-align: left;">Selenocysteine synthesis</td>
+<td style="text-align: right;">4.588380</td>
+<td style="text-align: right;">0.0000130</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-72764</td>
+<td style="text-align: left;">Eukaryotic Translation Termination</td>
+<td style="text-align: right;">4.588380</td>
+<td style="text-align: right;">0.0000130</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-975956</td>
+<td style="text-align: left;">Nonsense Mediated Decay (NMD) independent of the Exon Junction Complex (EJC)</td>
+<td style="text-align: right;">4.492788</td>
+<td style="text-align: right;">0.0000156</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-72613</td>
+<td style="text-align: left;">Eukaryotic Translation Initiation</td>
+<td style="text-align: right;">4.017081</td>
+<td style="text-align: right;">0.0000156</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-72737</td>
+<td style="text-align: left;">Cap-dependent Translation Initiation</td>
+<td style="text-align: right;">4.017081</td>
+<td style="text-align: right;">0.0000156</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-9711097</td>
+<td style="text-align: left;">Cellular response to starvation</td>
+<td style="text-align: right;">3.555178</td>
+<td style="text-align: right;">0.0000156</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-9837999</td>
+<td style="text-align: left;">Mitochondrial protein degradation</td>
+<td style="text-align: right;">4.401099</td>
+<td style="text-align: right;">0.0000162</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-156827</td>
+<td style="text-align: left;">L13a-mediated translational silencing of Ceruloplasmin expression</td>
+<td style="text-align: right;">4.077489</td>
+<td style="text-align: right;">0.0000222</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-1799339</td>
+<td style="text-align: left;">SRP-dependent cotranslational protein targeting to membrane</td>
+<td style="text-align: right;">4.041405</td>
+<td style="text-align: right;">0.0000226</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-72706</td>
+<td style="text-align: left;">GTP hydrolysis and joining of the 60S ribosomal subunit</td>
+<td style="text-align: right;">4.041405</td>
+<td style="text-align: right;">0.0000226</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-72689</td>
+<td style="text-align: left;">Formation of a pool of free 40S subunits</td>
+<td style="text-align: right;">4.228507</td>
+<td style="text-align: right;">0.0000232</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-927802</td>
+<td style="text-align: left;">Nonsense-Mediated Decay (NMD)</td>
+<td style="text-align: right;">3.936886</td>
+<td style="text-align: right;">0.0000290</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-975957</td>
+<td style="text-align: left;">Nonsense Mediated Decay (NMD) enhanced by the Exon Junction Complex (EJC)</td>
+<td style="text-align: right;">3.936886</td>
+<td style="text-align: right;">0.0000290</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-8868773</td>
+<td style="text-align: left;">rRNA processing in the nucleus and cytosol</td>
+<td style="text-align: right;">3.122590</td>
+<td style="text-align: right;">0.0000325</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-6791226</td>
+<td style="text-align: left;">Major pathway of rRNA processing in the nucleolus and cytosol</td>
+<td style="text-align: right;">3.154237</td>
+<td style="text-align: right;">0.0000444</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-611105</td>
+<td style="text-align: left;">Respiratory electron transport</td>
+<td style="text-align: right;">3.350892</td>
+<td style="text-align: right;">0.0000448</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-9010553</td>
+<td style="text-align: left;">Regulation of expression of SLITs and ROBOs</td>
+<td style="text-align: right;">3.350892</td>
+<td style="text-align: right;">0.0000448</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-72312</td>
+<td style="text-align: left;">rRNA processing</td>
+<td style="text-align: right;">2.970268</td>
+<td style="text-align: right;">0.0000682</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-376176</td>
+<td style="text-align: left;">Signaling by ROBO receptors</td>
+<td style="text-align: right;">2.955849</td>
+<td style="text-align: right;">0.0000717</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-211859</td>
+<td style="text-align: left;">Biological oxidations</td>
+<td style="text-align: right;">2.844287</td>
+<td style="text-align: right;">0.0000858</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-168273</td>
+<td style="text-align: left;">Influenza Viral RNA Transcription and Replication</td>
+<td style="text-align: right;">3.357932</td>
+<td style="text-align: right;">0.0002202</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-156580</td>
+<td style="text-align: left;">Phase II - Conjugation of compounds</td>
+<td style="text-align: right;">3.657087</td>
+<td style="text-align: right;">0.0002303</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-1655829</td>
+<td style="text-align: left;">Regulation of cholesterol biosynthesis by SREBP (SREBF)</td>
+<td style="text-align: right;">5.074208</td>
+<td style="text-align: right;">0.0002601</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-72766</td>
+<td style="text-align: left;">Translation</td>
+<td style="text-align: right;">2.432840</td>
+<td style="text-align: right;">0.0003960</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-168255</td>
+<td style="text-align: left;">Influenza Infection</td>
+<td style="text-align: right;">3.070381</td>
+<td style="text-align: right;">0.0004021</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-2426168</td>
+<td style="text-align: left;">Activation of gene expression by SREBF (SREBP)</td>
+<td style="text-align: right;">5.436652</td>
+<td style="text-align: right;">0.0008942</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-9865881</td>
+<td style="text-align: left;">Complex III assembly</td>
+<td style="text-align: right;">6.830665</td>
+<td style="text-align: right;">0.0014179</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-191273</td>
+<td style="text-align: left;">Cholesterol biosynthesis</td>
+<td style="text-align: right;">6.577677</td>
+<td style="text-align: right;">0.0017984</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-9609507</td>
+<td style="text-align: left;">Protein localization</td>
+<td style="text-align: right;">2.784626</td>
+<td style="text-align: right;">0.0022374</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-200425</td>
+<td style="text-align: left;">Carnitine shuttle</td>
+<td style="text-align: right;">9.061086</td>
+<td style="text-align: right;">0.0037464</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-1268020</td>
+<td style="text-align: left;">Mitochondrial protein import</td>
+<td style="text-align: right;">3.903237</td>
+<td style="text-align: right;">0.0055081</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-9711123</td>
+<td style="text-align: left;">Cellular response to chemical stress</td>
+<td style="text-align: right;">2.422361</td>
+<td style="text-align: right;">0.0083602</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-8957322</td>
+<td style="text-align: left;">Metabolism of steroids</td>
+<td style="text-align: right;">2.635952</td>
+<td style="text-align: right;">0.0093358</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-74182</td>
+<td style="text-align: left;">Ketone body metabolism</td>
+<td style="text-align: right;">10.148416</td>
+<td style="text-align: right;">0.0101201</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-2142753</td>
+<td style="text-align: left;">Arachidonate metabolism</td>
+<td style="text-align: right;">3.870159</td>
+<td style="text-align: right;">0.0110064</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-75105</td>
+<td style="text-align: left;">Fatty acyl-CoA biosynthesis</td>
+<td style="text-align: right;">4.799927</td>
+<td style="text-align: right;">0.0116904</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-9735869</td>
+<td style="text-align: left;">SARS-CoV-1 modulates host translation machinery</td>
+<td style="text-align: right;">4.799927</td>
+<td style="text-align: right;">0.0116904</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-72662</td>
+<td style="text-align: left;">Activation of the mRNA upon binding of the cap-binding complex and eIFs, and subsequent binding to 43S</td>
+<td style="text-align: right;">3.805656</td>
+<td style="text-align: right;">0.0116904</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-8963691</td>
+<td style="text-align: left;">Phenylalanine and tyrosine metabolism</td>
+<td style="text-align: right;">9.225833</td>
+<td style="text-align: right;">0.0137704</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-9754678</td>
+<td style="text-align: left;">SARS-CoV-2 modulates host translation machinery</td>
+<td style="text-align: right;">3.979771</td>
+<td style="text-align: right;">0.0167732</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-163210</td>
+<td style="text-align: left;">Formation of ATP by chemiosmotic coupling</td>
+<td style="text-align: right;">6.342760</td>
+<td style="text-align: right;">0.0183869</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-72695</td>
+<td style="text-align: left;">Formation of the ternary complex, and subsequently, the 43S complex</td>
+<td style="text-align: right;">3.903237</td>
+<td style="text-align: right;">0.0183869</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-163685</td>
+<td style="text-align: left;">Integration of energy metabolism</td>
+<td style="text-align: right;">2.819005</td>
+<td style="text-align: right;">0.0220411</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-5218921</td>
+<td style="text-align: left;">VEGFR2 mediated cell proliferation</td>
+<td style="text-align: right;">6.040724</td>
+<td style="text-align: right;">0.0221412</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-2046104</td>
+<td style="text-align: left;">alpha-linolenic (omega3) and linoleic (omega6) acid metabolism</td>
+<td style="text-align: right;">7.806474</td>
+<td style="text-align: right;">0.0243856</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-2046106</td>
+<td style="text-align: left;">alpha-linolenic acid (ALA) metabolism</td>
+<td style="text-align: right;">7.806474</td>
+<td style="text-align: right;">0.0243856</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-8949613</td>
+<td style="text-align: left;">Cristae formation</td>
+<td style="text-align: right;">4.612916</td>
+<td style="text-align: right;">0.0302987</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-5628897</td>
+<td style="text-align: left;">TP53 Regulates Metabolic Genes</td>
+<td style="text-align: right;">3.020362</td>
+<td style="text-align: right;">0.0304101</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-71240</td>
+<td style="text-align: left;">Tryptophan catabolism</td>
+<td style="text-align: right;">7.248869</td>
+<td style="text-align: right;">0.0313439</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-5579029</td>
+<td style="text-align: left;">Metabolic disorders of biological oxidation enzymes</td>
+<td style="text-align: right;">4.477243</td>
+<td style="text-align: right;">0.0337472</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-72649</td>
+<td style="text-align: left;">Translation initiation complex formation</td>
+<td style="text-align: right;">3.440141</td>
+<td style="text-align: right;">0.0355114</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-72702</td>
+<td style="text-align: left;">Ribosomal scanning and start codon recognition</td>
+<td style="text-align: right;">3.440141</td>
+<td style="text-align: right;">0.0355114</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R-HSA-9759194</td>
+<td style="text-align: left;">Nuclear events mediated by NFE2L2</td>
+<td style="text-align: right;">2.916212</td>
+<td style="text-align: right;">0.0364330</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R-HSA-156590</td>
+<td style="text-align: left;">Glutathione conjugation</td>
+<td style="text-align: right;">4.228507</td>
+<td style="text-align: right;">0.0427836</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Plot top pathways enriched as a bar plot.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in pathway results</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>pathway_res <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Data/pathwayEnrichmentResults_tumorGenes.rds"</span>))</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge top enriched pathways</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>enrich_paths <span class="ot">&lt;-</span> <span class="fu">rbind</span>(pathway_res<span class="sc">$</span>upper_genes<span class="sc">@</span>result,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                      pathway_res<span class="sc">$</span>lower_genes<span class="sc">@</span>result)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>enrich_paths<span class="sc">$</span>direction <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"upper"</span>, <span class="fu">nrow</span>(pathway_res<span class="sc">$</span>upper_genes<span class="sc">@</span>result)),</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">rep</span>(<span class="st">"lower"</span>, <span class="fu">nrow</span>(pathway_res<span class="sc">$</span>lower_genes<span class="sc">@</span>result)))</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter data frame for p.adjust &lt; 0.1</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="ot">&lt;-</span> enrich_paths <span class="sc">%&gt;%</span> <span class="fu">filter</span>(p.adjust <span class="sc">&lt;</span> <span class="fl">0.1</span>)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a column for bar length based on direction</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="ot">&lt;-</span> df_filtered <span class="sc">%&gt;%</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">bar_length =</span> <span class="fu">ifelse</span>(direction <span class="sc">==</span> <span class="st">"upper"</span>, FoldEnrichment, <span class="sc">-</span>FoldEnrichment),</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a> <span class="at">color =</span> <span class="fu">ifelse</span>(direction <span class="sc">==</span> <span class="st">"upper"</span>, <span class="sc">-</span><span class="fu">log10</span>(p.adjust), <span class="sc">-</span><span class="fu">log10</span>(p.adjust)))</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Arrange data frame by Fold Enrichment from highest to lowest</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="ot">&lt;-</span> df_filtered <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(bar_length))</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Select top 5 in each direction by absolute bar length</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>df_top <span class="ot">&lt;-</span> df_filtered <span class="sc">%&gt;%</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">abs_length =</span> <span class="fu">abs</span>(bar_length)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(direction) <span class="sc">%&gt;%</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">order_by =</span> abs_length, <span class="at">n =</span> <span class="dv">5</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert lobe terminology</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>df_top<span class="sc">$</span>direction <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"lower"</span>, <span class="st">"Dense"</span>, df_top<span class="sc">$</span>direction)</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>df_top<span class="sc">$</span>direction <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"upper"</span>, <span class="st">"Interdigitated"</span>, df_top<span class="sc">$</span>direction)</span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom shorten a few pathway names for plotting</span></span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>df_top<span class="sc">$</span>Description <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(df_top<span class="sc">$</span>Description,</span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Modulation of host responses by IFN-stimulated genes"</span> <span class="ot">=</span> <span class="st">"*Modulation by IFN"</span>,</span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Deposition of new CENPA-containing nucleosomes at the centromere"</span> <span class="ot">=</span> <span class="st">"*Nucleosome deposition"</span>,</span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"alpha-linolenic (omega3) and linoleic (omega6) acid metabolism"</span> <span class="ot">=</span> <span class="st">"*ALA (omega3) and LA (omega6) metabolism"</span>)</span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the plot</span></span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_top, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Description, bar_length), <span class="at">y =</span> bar_length, <span class="at">fill =</span> direction)) <span class="sc">+</span></span>
+<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a> <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Dense"</span> <span class="ot">=</span> <span class="st">"lightskyblue3"</span>, <span class="st">"Interdigitated"</span> <span class="ot">=</span> <span class="st">"tomato3"</span>)) <span class="sc">+</span></span>
+<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a> <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb26-47"><a href="#cb26-47" aria-hidden="true" tabindex="-1"></a> <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb26-48"><a href="#cb26-48" aria-hidden="true" tabindex="-1"></a> <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Fold Enrichment"</span>, <span class="at">x =</span> <span class="st">"Pathway"</span>, <span class="at">fill =</span> <span class="st">"Lobe"</span>) <span class="sc">+</span></span>
+<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a> <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a> <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a> <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a> <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb26-53"><a href="#cb26-53" aria-hidden="true" tabindex="-1"></a> <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb26-54"><a href="#cb26-54" aria-hidden="true" tabindex="-1"></a> <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>))</span>
+<span id="cb26-55"><a href="#cb26-55" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/barplot_pathwayEnrichmentByLobe_tumorGenes.png"</span>),</span>
+<span id="cb26-56"><a href="#cb26-56" aria-hidden="true" tabindex="-1"></a>       <span class="at">width =</span> <span class="dv">12</span>, <span class="at">height =</span> <span class="dv">4</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/barplot_pathwayEnrichmentByLobe.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/barplot_pathwayEnrichmentByLobe.png" class="img-fluid figure-img" width="1800"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="publication-quality-plots" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="publication-quality-plots"><span class="header-section-number">4.4</span> Publication Quality Plots</h2>
+<p>In this final section we re-show the high quality plots that appear in the manuscript.</p>
+<p>Spatial localization of the two manually drawn lobes:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/XY_bothLobes.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/XY_bothLobes.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Volcano plot of major lobe differences:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/volcano_lobeDifferences_tumorGenes.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/volcano_lobeDifferences_tumorGenes.png" class="img-fluid figure-img" width="900"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Bar plot of top pathways per lobe:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="fu">paste0</span>(tumorDE_dir, <span class="st">"/Plots/barplot_pathwayEnrichmentByLobe.png"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis/tumorDE/Plots/barplot_pathwayEnrichmentByLobe.png" class="img-fluid figure-img" width="1800"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./03-spatialDomains.html" class="pagination-link" aria-label="Spatial domains">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial domains</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./05-immuneLandscape.html" class="pagination-link" aria-label="Immune landscape">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Immune landscape</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,7 @@
+# Preface {.unnumbered} 
+
+
+This notebook contains analyses pertaining to a CosMx&#174; SMI WTx breast cancer dataset
+and is a companion to the manuscript 
+["Breast cancer through the lens of whole transcriptome spatial imaging"](https://www.biorxiv.org/content/10.64898/2025.12.19.695622v1) by
+Williams *et al*.

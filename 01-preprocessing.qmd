@@ -1,0 +1,2262 @@
+# Data Preprocessing
+
+In this first chapter, we complete preprocessing steps on the breast cancer
+dataset. We begin with a Seurat object exported from AtoMx<sup>&#174;</sup> SIP 
+before any processing. We perform quality control to remove low quality cells
+and then proceed through normalization, dimension reduction, and cell typing.
+
+
+```{r}
+#| label: loading preamble
+#| echo: false
+#| warning: false
+#| message: false
+source("./preamble.R")
+```
+
+## QC
+
+In this section we run standard QC steps on the breast cancer dataset.
+
+<details>
+<summary>Click to show/hide QC steps</summary>
+
+
+### Per Cell QC
+
+#### Transcripts per cell
+
+Visualize transcripts per cell.
+
+```{r}
+#| label: plot_txPerCell
+#| message: false
+#| warning: false
+#| eval: false
+
+# Object and color setup
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$raw_seurat_file)
+}
+
+# Plotting XY
+ggplot(seu.obj@meta.data, 
+       aes(x = x_slide_mm, y = y_slide_mm, color = log10(nCount_RNA))) +
+  geom_point(size = 0.001) +
+  scale_color_viridis(option = "A") +
+  theme_classic() +
+  coord_fixed() 
+ggsave(filename = paste0(qc_dir, "/Plots/XY_txPerCell.png"),
+       width = 16, height = 16, units = "in")
+
+# Plot histogram of tx per cell with cutoffs
+lower_tx_cutoff = 200 # Adjust by dataset
+upper_tx_cutoff = 15000 # Adjust by dataset
+ggplot(seu.obj@meta.data, aes(x = log10(nCount_RNA))) +
+  geom_histogram() +
+  geom_vline(xintercept = log10(lower_tx_cutoff), color = "red") +
+  geom_vline(xintercept = log10(upper_tx_cutoff), color = "red") +
+  ylab("Cells") +
+  theme_classic()
+ggsave(filename = paste0(qc_dir, "/Plots/histogram_txPerCell.png"),
+       width = 4, height = 4, units = "in")
+results_list$lower_tx_cutoff = lower_tx_cutoff
+results_list$upper_tx_cutoff = upper_tx_cutoff
+saveRDS(results_list, results_list_file)
+
+
+```
+
+Transcripts per cell in XY space:
+
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/XY_txPerCell.png"))
+```
+
+Histogram of transcripts per cell with cutoffs shown:
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/histogram_txPerCell.png"))
+```
+
+
+#### Unique genes per cell
+Visualize unique transcripts per cell.
+
+```{r}
+#| label: plot_uniqueTxPerCell
+#| message: false
+#| warning: false
+#| eval: false
+
+# Object and color setup
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$raw_seurat_file)
+}
+
+# Plotting XY
+ggplot(seu.obj@meta.data, 
+       aes(x = x_slide_mm, y = y_slide_mm, color = log10(nFeature_RNA))) +
+  geom_point(size = 0.001) +
+  scale_color_viridis(option = "A") +
+  theme_classic() +
+  coord_fixed() 
+ggsave(filename = paste0(qc_dir, "/Plots/XY_uniqueTxPerCell.png"),
+       width = 16, height = 16, units = "in")
+
+# Plot histogram of tx per cell with no cutoffs shown (non-standard to use them)
+ggplot(seu.obj@meta.data, aes(x = log10(nFeature_RNA))) +
+  geom_histogram() +
+  ylab("Cells") +
+  theme_classic()
+ggsave(filename = paste0(qc_dir, "/Plots/histogram_uniqueTxPerCell.png"),
+       width = 4, height = 4, units = "in")
+
+
+
+```
+
+Unique transcripts per cell in XY space:
+
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/XY_uniqueTxPerCell.png"))
+```
+
+Histogram of unique transcripts per cell:
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/histogram_uniqueTxPerCell.png"))
+```
+
+
+#### Area per cell
+
+
+```{r}
+#| label: plot_areaPerCell
+#| message: false
+#| warning: false
+#| eval: false
+
+# Object and color setup
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$raw_seurat_file)
+}
+
+# Calculate 5x geomean area
+area_geoMean <- EnvStats::geoMean(seu.obj@meta.data$Area.um2)
+
+# Plotting XY
+ggplot(seu.obj@meta.data, 
+       aes(x = x_slide_mm, y = y_slide_mm, color = Area.um2)) +
+  geom_point(size = 0.001) +
+  scale_color_viridis(option = "A") +
+  theme_classic() +
+  coord_fixed() 
+ggsave(filename = paste0(qc_dir, "/Plots/XY_areaxPerCell.png"),
+       width = 16, height = 16, units = "in")
+
+# Plot histogram of area per cell with cutoff shown
+area_cutoff <- 5*area_geoMean # Adjust by dataset
+ggplot(seu.obj@meta.data, aes(x = Area.um2)) +
+  geom_histogram() +
+  geom_vline(xintercept = area_cutoff, color = "red") +
+  #geom_vline(xintercept = log10(upper_tx_cutoff), color = "red") +
+  ylab("Cells") +
+  theme_classic()
+ggsave(filename = paste0(qc_dir, "/Plots/histogram_areaPerCell.png"),
+       width = 4, height = 4, units = "in")
+results_list$area_cutoff = area_cutoff
+saveRDS(results_list, results_list_file)
+
+
+
+```
+
+Cell area in XY space:
+
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/XY_areaxPerCell.png"))
+```
+
+Histogram of cell areas with cutoff shown:
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/histogram_areaPerCell.png"))
+```
+
+### Per FOV QC
+
+#### FOVQC
+Use the CosMx-specific algorithm [FOVQC](https://nanostring-biostats.github.io/CosMx-Analysis-Scratch-Space/posts/fov-qc/index.html) to check for any FOVs that show loss of signal. 
+
+```{r}
+#| label: run_fovQC
+#| message: false
+#| warning: false
+#| eval: false
+
+# Object and color setup
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$raw_seurat_file)
+}
+
+## Run FOV QC
+if (!file.exists(paste0(qc_dir, "/Data/fovqc.RDS"))) {
+   source("https://raw.githubusercontent.com/Nanostring-Biostats/CosMx-Analysis-Scratch-Space/Main/_code/FOV%20QC/FOV%20QC%20utils.R")  
+  allbarcodes <- readRDS(url("https://github.com/Nanostring-Biostats/CosMx-Analysis-Scratch-Space/raw/Main/_code/FOV%20QC/barcodes_by_panel.RDS"))
+  barcodes <- allbarcodes[["Hs_WTX"]]
+  
+  smallfovs <- names(which(table(seu.obj@meta.data$fov) < 500))
+  tempuse <- !is.element(seu.obj@meta.data$fov, smallfovs)
+  
+  sharedgenes <- intersect(barcodemap[,1], rownames(seu.obj@assays$RNA@counts))
+  res <- runFOVQC(counts = t(seu.obj@assays$RNA@counts)[tempuse, sharedgenes], 
+                  xy = seu.obj@meta.data[,c("x_slide_mm", "y_slide_mm")][tempuse, ], 
+                  fov = as.character(seu.obj@meta.data$fov[tempuse]), 
+                  barcodemap = barcodemap[match(sharedgenes, barcodemap[, 1]), ],
+                  max_prop_loss = 0.5, max_totalcounts_loss = 0.5)  
+  str(res)
+  saveRDS(res, file = paste0(qc_dir, "/Data/fovqc.RDS"))
+} else {
+  res <- readRDS(paste0(qc_dir, "/Data/fovqc.RDS"))
+}
+
+# Plot FOV QC results following FOV QC vignette from Scratch Space.
+
+# Show flagged FOVs in space
+png(filename = paste0(qc_dir, "/Plots/flagged_FOVs_in_space.png"), 
+    width = 8, height = 6, units = "in", res = 300)
+mapFlaggedFOVs(res)
+dev.off()
+
+# Plot loss in total signal strength:
+png(filename = paste0(qc_dir, "/Plots/overall_signal_loss_in_space.png"), 
+    width = 8, height = 6, units = "in", res = 300)
+FOVSignalLossSpatialPlot(res, shownames = TRUE)
+dev.off()
+
+```
+Flagged FOVs in space:
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/flagged_FOVs_in_space.png"))
+```
+There is one FOV that gets flagged due to low counts. As this is on the edge of the tissue, this is not too surprising and we will keep this FOV in our analysis.
+
+Loss in total signal strength:
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/overall_signal_loss_in_space.png"))
+```
+The changes in total signal strength tend to follow biology and do not track with individual FOVs. Thus, we will not exclude any FOVs for further analysis based on these results.
+
+### Cell Flagging
+
+Flag cells that failed any of the QC above and plot these in space. We're looking for areas with high failure rates, suggesting technical artifacts (local tissue peeling, blurriness, etc).
+
+```{r}
+#| label: flag_cells
+#| message: false
+#| warning: false
+#| eval: false
+
+# Object and color setup
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$raw_seurat_file)
+}
+
+# Flag cells that failed tx or area QC
+seu.obj@meta.data <- seu.obj@meta.data %>%
+  mutate(qcCellsFlagged = case_when(
+    Area.um2 > area_cutoff ~ "TRUE",
+    nCount_RNA < lower_tx_cutoff ~ "TRUE",
+    nCount_RNA > upper_tx_cutoff ~ "TRUE",
+    TRUE ~ "FALSE"
+  ))
+
+# Plotting XY
+ggplot(seu.obj@meta.data, 
+       aes(x = x_slide_mm, y = y_slide_mm, color = qcCellsFlagged)) +
+  geom_point(size = 0.001) +
+  scale_color_manual(values = c("FALSE" = "lightgrey", "TRUE" = "red")) +
+  theme_classic() +
+  coord_fixed() 
+ggsave(filename = paste0(qc_dir, "/Plots/XY_QCflaggedCells.png"),
+       width = 16, height = 16, units = "in")
+
+# Remove cells failing QC and save seurat object
+seu.obj <- seu.obj[,which(seu.obj@meta.data$qcCellsFlagged == "FALSE")]
+saveRDS(seu.obj, file = paste0(objects_dir, "/seurat_object_postQC.rds"))
+results_list$seurat_file_postQC = paste0(objects_dir, "/seurat_object_postQC.rds")
+  saveRDS(results_list, results_list_file)
+
+
+```
+
+Flagged cells in XY space:
+
+```{r}
+knitr::include_graphics(paste0(qc_dir, "/Plots/XY_QCflaggedCells.png"))
+```
+
+From this plot, it's clear that the flagged cells aren't evenly spread across the tissue - there are round-ish structures that are getting flagged at a much higher rate, suggesting that there's a structure in the tissue that has lower counts for some reason. Given this, we have used a liberal cutoff of 200 counts per cell. From a bit of exploration, it's clear that these cells are primarily getting flagged due to having low counts. Returning to the immunofluorescence images, these likely mark regions of necrosis.
+
+</details>
+
+
+## Normalization
+
+In this section we run basic normalization on the data. 
+
+<details>
+<summary>Click to show/hide normalization steps</summary>
+
+
+### Total counts normalization
+Run total counts normalization with Seurat function.
+
+```{r}
+#| label: run_tcNorm
+#| message: false
+#| warning: false
+#| eval: false
+
+# Object and color setup
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postQC)
+}
+
+# With Seurat
+seu.obj <- NormalizeData(seu.obj, 
+                         normalization.method = "RC", 
+                         scale.factor = mean(seu.obj@meta.data$nCount_RNA))
+
+```
+
+### Highly variable genes
+Identify highly variable genes
+```{r}
+#| label: run_hvg
+#| message: false
+#| warning: false
+#| eval: false
+
+
+# With Seurat
+seu.obj <- FindVariableFeatures(seu.obj, 
+                                selection.method = "vst", 
+                                nfeatures = 3000)
+
+# Get top 10 variable features to label
+top10 <- head(VariableFeatures(seu.obj), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(seu.obj)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot2
+ggsave(plot = plot2, filename = paste0(norm_dir, "/Plots/hvgs.png"))
+
+# Save HVGs to a vector
+saveRDS(VariableFeatures(seu.obj), file = paste0(norm_dir, "/Data/hvgs.rds"))
+
+# Save Seurat object post-normalization and HVG identification
+saveRDS(seu.obj, file = paste0(objects_dir, "/seurat_object_postNorm.rds"))
+results_list$seurat_file_postNorm = paste0(objects_dir, "/seurat_object_postNorm.rds")
+  saveRDS(results_list, results_list_file)
+```
+
+
+Plot of the most variable genes - largely IgGs and some cancer-related genes.
+
+```{r}
+knitr::include_graphics(paste0(norm_dir, "/Plots/hvgs.png"))
+```
+
+</details>
+
+
+## Dimension Reduction
+
+In this section we calculate dimension reductions on the data. 
+
+<details>
+<summary>Click to show/hide dimension reduction steps</summary>
+
+
+### Scale data
+Scale data with Seurat function.
+
+```{r}
+#| label: run_scaleData
+#| message: false
+#| warning: false
+#| eval: false
+
+# Object setup
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postNorm)
+}
+
+# With Seurat
+seu.obj <- ScaleData(seu.obj)
+
+
+```
+
+### PCA
+Run PCA
+```{r}
+#| label: run_pca
+#| message: false
+#| warning: false
+#| eval: false
+
+# With Seurat
+seu.obj <- RunPCA(seu.obj, 
+                  features = VariableFeatures(seu.obj))
+
+# Plot it
+DimPlot(seu.obj, reduction = "pca", cols = rep("lightgrey", 25))
+ggsave(filename = paste0(dimRed_dir, "/Plots/pca.png"))
+```
+PCA plot:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/pca.png"))
+```
+
+
+### UMAP
+Run UMAP with the uwot package and then add that to the Seurat object.
+```{r}
+#| label: run_umap
+#| message: false
+#| warning: false
+#| eval: false
+
+# Make umap with a function using uwot package
+umapobj <- make_umap(seu.obj@reductions$pca@cell.embeddings)
+
+seu.obj[["umap"]] <- umapobj$ump
+seu.obj[["umapgrph"]] <- Seurat::as.Graph(umapobj$grph)
+
+
+# Plot it
+DimPlot(seu.obj, reduction = "umap", cols = "lightgrey", group.by = "Run_Tissue_name")
+ggsave(filename = paste0(dimRed_dir, "/Plots/umap.png"))
+
+# Save the seurat object with these initial steps
+saveRDS(seu.obj, file = paste0(objects_dir, "/seurat_object_postUMAP.rds"))
+results_list$seurat_file_postUMAP = paste0(objects_dir, "/seurat_object_postUMAP.rds")
+  saveRDS(results_list, results_list_file)
+```
+
+UMAP plot:
+
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/umap.png"))
+```
+
+
+</details>
+
+
+## Cell Typing
+
+In this section we assign major and minor cell types using a combination of
+iterative unsupervised clustering and marker-based hierarchical assignment.
+
+<details>
+<summary>Click to show/hide cell typing steps</summary>
+
+This section performs cell typing of the dataset with a multistep approach. 
+First, we use unsupervised clustering to broadly group the cells. For some of 
+these major cell types (tumor cells, fibroblasts, vascular cells) we subset and 
+perform unsupervised clustering a second time on the subset. For immune cells, 
+we use the marker-based hierarchical cell typing approach HieraType. 
+
+### Unsupervised clustering
+Cluster cells with Seurat function.
+
+```{r}
+#| label: run_leidenCluster
+#| message: false
+#| warning: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postUMAP)
+}
+
+# With Seurat
+seu.obj <- Seurat::FindClusters(seu.obj, graph.name = "umapgrph", resolution = 0.7)
+
+# Plot it in XY space with random colors
+set.seed(2024)
+my_pal <- sample(colors(distinct = TRUE), length(unique(seu.obj@meta.data$seurat_clusters)))
+names(my_pal) <- as.character(unique(seu.obj@meta.data$seurat_clusters))
+ggplot(seu.obj@meta.data,
+        aes(x = x_slide_mm, y = y_slide_mm, 
+            color = as.factor(seurat_clusters))) +  
+    geom_point(size = 0.1) +  
+  scale_color_manual(values = my_pal) +
+    theme_classic() +  
+    coord_fixed() +  
+    guides(colour = guide_legend(override.aes = list(size=10)))
+ggsave(filename = paste0(dimRed_dir, "/Plots/XY_leiden.png"),
+       width = 8, height = 16, units = "in")
+
+# Plot each cell type separately
+for (ct in unique(seu.obj@meta.data$seurat_clusters)){
+  ggplot(seu.obj@meta.data[order(seu.obj@meta.data$seurat_clusters == ct),],
+         aes(x = x_slide_mm, y = y_slide_mm, 
+             color = seurat_clusters==ct)) +  
+    geom_point(size = 0.05) +  
+    scale_color_manual(values = c("lightgrey", "red"), name = ct) +
+    theme_classic() +  
+    coord_fixed() +  
+    guides(colour = guide_legend(override.aes = list(size=10)))
+  ggsave(filename = paste0(dimRed_dir, "/Plots/XY_leiden_", ct, ".png"),
+         width = 8, height = 16, units = "in")
+}
+
+
+# Plot it in UMAP space
+DimPlot(seu.obj, group.by = "seurat_clusters", reduction = "umap", label = T) +
+  scale_color_manual(values = my_pal)
+ggsave(filename = paste0(dimRed_dir, "/Plots/umap_leiden.png"))
+
+# Plot each cell type separately in UMAP space
+plot.df <- seu.obj@meta.data
+plot.df$UMAP1 <- seu.obj@reductions$umap@cell.embeddings[,1]
+plot.df$UMAP2 <- seu.obj@reductions$umap@cell.embeddings[,2]
+
+for (ct in unique(plot.df$seurat_clusters)){
+  ggplot(plot.df[order(plot.df$seurat_clusters == ct),],
+         aes(x = UMAP1, y = UMAP2, 
+             color = seurat_clusters==ct)) +  
+    geom_point(size = 0.05, alpha = 0.5) +  
+    scale_color_manual(values = c("lightgrey", "red"), name = ct) +
+    theme_classic() +  
+    coord_fixed() +  
+    guides(colour = guide_legend(override.aes = list(size=10)))
+  ggsave(filename = paste0(dimRed_dir, "/Plots/UMAP_leiden_", ct, ".png"),
+         width = 10, height = 8, units = "in")
+}
+
+# Generate a marker heatmap with HieraType functions
+## prepare data for marker gene heatmap:
+fc_subclus_ctl_gran <- clusterwise_foldchange_metrics(seu.obj[["RNA"]]@counts
+                                                      ,metadata = seu.obj@meta.data
+                                                      ,cluster_column = "seurat_clusters"
+)
+# subtract background from the mean per-cluster expression profiles:
+neg_counts <- seu.obj@assays$negprobes$counts
+for (name in unique(seu.obj@meta.data$seurat_clusters)) {
+  isthiscelltype <- seu.obj@meta.data$seurat_clusters == name
+  meannegthiscelltype <- Matrix::mean(neg_counts[, isthiscelltype])
+  
+  fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] <- 
+    pmax(fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] - meannegthiscelltype, 0)
+}
+# create the heatmap:
+hm_semiSup <- add_ncells(marker_heatmap(fc_subclus_ctl_gran))
+
+png(filename = paste0(dimRed_dir, "/Plots/heatmap_leiden_negRemoved.png"),
+    width = 24, height = 8, units = "in", res = 300)
+print(hm_semiSup)
+dev.off()
+
+# Save seurat object
+results_list$leiden_color_pal <- my_pal
+results_list$seurat_file_postLeiden <- paste0(objects_dir, "/seurat_object_postLeiden.rds")
+saveRDS(results_list, results_list_file)
+saveRDS(seu.obj, results_list$seurat_file_postLeiden)
+
+```
+
+Spatial plot of unsupervised clusters:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/XY_leiden.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(dimRed_dir, "Plots", paste0("XY_leiden_*.png")))
+#Remove files that contain 'hieratype'
+files <- files[!grepl("hieratype", files)]
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'XY_leiden_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+UMAP plot of unsupervised clusters:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/umap_leiden.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(dimRed_dir, "Plots", paste0("UMAP_leiden_*.png")))
+
+#Remove files that contain 'hieratype'
+files <- files[!grepl("hieratype", files)]
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'UMAP_leiden_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+
+
+Heatmap of top markers:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/heatmap_leiden_negRemoved.png"))
+```
+
+
+### Refine cell type annotations
+
+These unsupervised clusters do a pretty good job of splitting apart major cell types. We follow this up by naming and refining this initial clustering result based on spatial distribution, top marker genes, and position in UMAP space. In particular, we'll recluster the tumor cells on their own to reduce the number of clusters and subcluster the fibroblast and vascular clusters. Additionally, we'll use HieraType to perform targeted marker-based annotation of the immune cells. We start with our evaluation and planned actions for each cluster:
+
+| Cell type | Evaluation | Refinement |
+|-----------|------------|-------------|
+| 0         |Tumor, lower lobe        |Tumor recluster       |
+| 1         |Tumor, lower lobe        |Tumor recluster       |
+| 2         |Fibroblasts, markers LUM, THBS1, AEBP1          |Fibroblast subcluster             |
+| 3         |Immune, myeloid         |Immune HieraType             |
+| 4         |Tumor, between lobes      |Tumor recluster             |
+| 5         |Tumor, exterior of upper lobe       |Tumor recluster             |
+| 6         |Immune      |Immune HieraType            |
+| 7         |Tumor, exterior of lower lobe      |Tumor recluster         |
+| 8         |Tumor, spotty      |Tumor recluster       |
+| 9         |Vasculature    |Vasculature subcluster        |
+| 10        | Tumor, lower lobe   |Tumor recluster    |
+| 11         |Low count cells near tissue gaps. Necrotic cells.     |Rename necrotic cells         |
+| 12         |Tumor, upper lobe         |Tumor recluster         |
+| 13         |Tumor, interior of upper lobe         |Tumor recluster             |
+| 14         |Tumor, adjacent to necrotic zones     |Tumor recluster         |
+| 15         |Plasma cells two clusters in UMAP space          |Immune HieraType     |
+| 16         |Immune, proliferative        |Immune HieraType             |
+| 17         |Small number of border cells and well defined small clusters, potentially healthy epithelia        |Rename Unknown             |
+
+:::{.panel-tabset}
+
+#### Fibroblast subcluster
+
+We start with fibroblasts since this cluster is near immune clusters and may be partially overlapping. The initial unsupervised clustering had only one fibroblast cluster, but from previous experience with this sample we expect that we should be able to identify a few subtypes. Additionally, it appears that the cluster that is mostly fibroblast may also contain some immune cells. Here we take the fibroblast cells, repeat initial preprocessing so that highly variable genes are chosen based on these cells, and use unsupervised clustering to separate these cells into multiple clusters, some of which we'll add to the immune cells for HieraType clustering.
+```{r}
+#| label: run_leiden_fibroblast_cluster
+#| message: false
+#| warning: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postLeiden)
+}
+
+# Subset the seurat object to only include fibroblast cluster
+fibro_leiden <- c(2)
+fibro_idx <- which(seu.obj@meta.data$seurat_clusters %in% fibro_leiden)
+seu.fibro <- seu.obj[,fibro_idx]
+
+# Repeat preprocessing, dimension reduction, and leiden clustering
+seu.fibro <- NormalizeData(seu.fibro, 
+                         normalization.method = "RC", 
+                         scale.factor = mean(seu.fibro@meta.data$nCount_RNA))
+seu.fibro <- FindVariableFeatures(seu.fibro, 
+                                selection.method = "vst", 
+                                nfeatures = 3000)
+seu.fibro <- ScaleData(seu.fibro)
+seu.fibro <- RunPCA(seu.fibro, 
+                  features = VariableFeatures(seu.fibro))
+umapobj <- make_umap(seu.fibro@reductions$pca@cell.embeddings)
+
+seu.fibro[["umap"]] <- umapobj$ump
+seu.fibro[["umapgrph"]] <- Seurat::as.Graph(umapobj$grph)
+seu.fibro <- Seurat::FindClusters(seu.fibro, graph.name = "umapgrph", resolution = 0.8)
+
+# Save this Seurat object and assignments to files
+saveRDS(seu.fibro, file = paste0(objects_dir, "/seurat_fibro_obj.rds"))
+fibro_assignments <- seu.fibro@meta.data[,c("cell_ID", "seurat_clusters")]
+saveRDS(fibro_assignments, file = paste0(celltyping_dir, "/Data/fibro_cluster_assignments.rds"))
+
+# Save a few quick plots for evaluation
+DimPlot(seu.fibro) + coord_fixed()
+ggsave(file = paste0(celltyping_dir, "/Plots/UMAP_fibroblast.png"))
+
+# Marker heatmap
+## prepare data for marker gene heatmap:
+fc_subclus_ctl_gran <- clusterwise_foldchange_metrics(seu.fibro[["RNA"]]@counts
+                                                      ,metadata = seu.fibro@meta.data
+                                                      ,cluster_column = "seurat_clusters"
+)
+# subtract background from the mean per-cluster expression profiles:
+neg_counts_fibro = seu.fibro@assays$negprobes$counts
+for (name in unique(seu.fibro@meta.data$seurat_clusters)) {
+  if(is.na(name)){next}
+  isthiscelltype <- seu.fibro@meta.data$seurat_clusters == name
+  meannegthiscelltype <- Matrix::mean(neg_counts_fibro[, isthiscelltype])
+  
+  fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] <- 
+    pmax(fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] - meannegthiscelltype, 0)
+}
+# create the heatmap:
+hm_lh <- add_ncells(marker_heatmap(fc_subclus_ctl_gran))
+
+png(filename = paste0(dimRed_dir, "/Plots/heatmap_fibroblast_subcluster_negRemoved.png"),
+    width = 24, height = 8, units = "in", res = 300)
+print(hm_lh)
+dev.off()
+
+
+
+```
+
+UMAP distribution of fibroblasts only:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/UMAP_fibroblast.png"))
+```
+
+Top marker genes for fibroblast subclusters:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/heatmap_fibroblast_subcluster_negRemoved.png"))
+```
+
+Based on the markers present, we can see that there are multiple non-fibroblast cell subtypes contained within this cluster. We name the fibroblast subtypes and note the immune subtypes to put into the immune-focused hieratype subtyping.
+
+| Cell type | Evaluation | Name |
+|-----------|------------|-------------|
+| 0         |Key markers CCN1, CCN2        |Myofibroblasts       |
+| 1         |Key markers COL6A6, MMP11       |Matrix fibroblasts       |
+| 2         |APC markers HLA-DRA, C1QC          |Immune subtype             |
+| 3         |T cell markers TRBC1, IL2RB        |Immune subtype   |
+| 4         |Key markers FOS, PTGIS, EGR1   |iCAFs    |
+| 5         |Inflammatory markers S100A8/A9   |Immune subtype   |
+| 6       |Metabolic markers MUCL1, PIP, FABP7, unclear where to put these. Choosing based on XY and UMAP localization.   |Immune subtype   |
+| 7         |Proliferation markers histones. Choosing based on UMAP proximity.    |Immune subtype   |
+| 8           |B cell markers MS4A1, BANK1   |Immune subtype   |
+| 9           |Key markers CXCL10, IDO1   |Interferon-activated CAFs    |
+| 10        |Plasma markers IGHA1, IGKC, JCHAIN   |Immune subtype   |
+| 11        |Markers CST1/2, MMP7, unclear. Choosing based on UMAP localization.    |Immune subtype   |
+| 12        |Immune markers MMP9, SPP1    |Immune subtype     |
+
+Add cell type names to fibroblast subtypes.
+```{r}
+#| label: add_fibro_subtype_names
+#| message: false
+#| warning: false
+#| eval: false
+
+# Follows table above. Any that are not fibroblasts will be listed as NA
+fibro_assignments <- readRDS(file = paste0(celltyping_dir, "/Data/fibro_cluster_assignments.rds"))
+fibro_assignments$minor_cell_type <- NA
+fibro_assignments$minor_cell_type[which(fibro_assignments$seurat_clusters == 0)] <- "Myofibroblasts"
+fibro_assignments$minor_cell_type[which(fibro_assignments$seurat_clusters == 1)] <- "Matrix fibroblasts"
+fibro_assignments$minor_cell_type[which(fibro_assignments$seurat_clusters == 4)] <- "Inflammatory CAFs"
+fibro_assignments$minor_cell_type[which(fibro_assignments$seurat_clusters == 9)] <- "Interferon-activated CAFs"
+saveRDS(fibro_assignments, file = paste0(celltyping_dir, "/Data/fibro_cluster_assignments.rds"))
+
+```
+
+#### Immune HieraType
+
+To better assign the immune cells, we use [HieraType](https://nanostring-biostats.github.io/CosMx-Analysis-Scratch-Space/posts/immune-cell-typing-smooth/), a marker-based approach to assigning cell types. We start with marker-based gene lists included in the HieraType package and add in some additional cell subtypes that we expect to be present in this dataset. As described in the table above, we'll use unsupervised clusters 3, 6, 15, and 16 for this immune classification as well as some of the fibroblast subclusters.
+
+```{r}
+#| label: run_hieratype_leiden_immune
+#| message: false
+#| warning: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postLeiden)
+}
+
+### Pipeline, with 
+### level-1 ('l1') being classification of major immune cell categories
+### level-t ('lt') being T8/T4 classification
+### level-t4 ('lt4') being further T4 subclassification
+### level-t8 ('lt8') being further T8 subclassification
+### level-m3 ('m3') being TAM subclassification
+### level-p2 ('p2') being plasma subclassification
+
+# All of the above are in HieraType package except plasma and macrophage subclassification
+# Here are the plasma subtyping marker lists we'll use:
+markerslist_p2 <-
+  HieraType::make_markerslist(
+    index_marker = list(
+      "Plasma_IgA" = c("IGHA1", "IGHA2", "JCHAIN"),
+      "Plasma_IgG" = c("IGHG1", "IGHG2", "IGHG3", "IGHG4")
+    ),
+    predictors = list(
+      "Plasma_IgA" = c("MZB1", "XBP1", "IRF4", "TNFRSF17", "CD38", "CD27", "CD138", "PRDM1", "CXCR4", "HLA-DRA",
+                       "CD79A", "CD79B", "CD19", "CD40", "CD44", "CD45", "CXCR3", "KLF4", "HSP90B1", "SEC61A1",
+                       "DERL3", "HSPA5", "CALR", "PDIA4", "PDIA6", "PPIB", "CANX", "SYVN1", "FKBP11",
+                       "SDC1","CD38","PRDM1","XBP1","IRF4","SLAMF7",
+                       "MZB1","TNFRSF17","IGHA1","IGHA2","JCHAIN","PIGR","AICDA","FCAMR","CCR10",
+                       "ITGA4","ITGB7","CCR9","CCR10","ITGAE","MME","CXCR3","CXCR4",
+                       "IL10RA","IL10RB","LTB","TGFBR1","PIgR","XBP1","MZB1","DERL3",
+                       "SEC61A1","SSR1","SPCS3","FCRL4","POU2AF1","IL6R","IL6ST",
+                       "TNFRSF13B","TNFRSF13C","TNFRSF17","AICDA","BACH2","HSPA5","CD10"),
+      "Plasma_IgG" = c("CD38", "CD27", "CD138", "TNFRSF17", "IRF4", "XBP1", "PRDM1", "CXCR4", "HLA-DRA",
+                       "CD19", "CD79A", "CD79B", "CD40", "CD44", "CD45", "KLF4", "CXCR3", "HSP90B1", "SEC61A1",
+                       "DERL3", "HSPA5", "CALR", "PDIA4", "PDIA6", "PPIB", "CANX", "SYVN1", "FKBP11", "MZB1", "JCHAIN",
+                       "SDC1","CD38","PRDM1","XBP1","IRF4","SLAMF7",
+                       "MZB1","TNFRSF17","IGHG1","IGHG2","IGHG3","IGHG4","FCGR2B","FCGR3A",
+                       "FCGR1A","FCGR2B","FCGR3A",
+                       "CXCR3","CXCR4","ITGA4","ITGB1","ITGB2","CCR7","MYC","MKI67","PCNA",
+                       "CDK1","BIRC5","BCL2","BCL2L1","TNFRSF13B","TNFRSF13C","TNFRSF17",
+                       "SYK","LYN","BTK","HSPA5","XBP1","MZB1","DERL3","SSR1","LAMP1","CTSB",
+                       "CTSL","GPX1","IL6R","IL6ST","IL10RA","IL10RB")
+    )
+  )
+
+
+
+
+markerslist_m3 <- 
+  HieraType::make_markerslist(
+    index_marker = list(
+      "TAM_SPP1" = c("SPP1", "TREM1") #SPP1+ TAMs
+      ,"TAM_M2like" = c("MRC1", "CD163", "IL10", "ARG1") #M2-like TAMs
+      ,"TAM_M1like" = c("IL1B", "CXCL9", "HLA-DRA", "TNF") #M1-like TAMs
+    )
+    ,predictors = list(
+      "TAM_SPP1" =  c("GPNMB", "CD63", "CHI3L1", "CD9", "CD276", "CTSB", "LGALS9", "TREM1", "CD84", "AXL",
+                      "MMP14", "ITGB5", "SERPINE1", "HIF1A", "TNFAIP6", "ALOX5AP", "CTSD", "LGMN", "C1QC", "C1QB",
+                      "TREM2", "LGALS3", "FABP5",
+                      "SPP1", "TREM1", "TIE2", "VEGFA", "NLRP3", "MMP9", "CX3CR1", "CCL2", "TNF",
+                      "SPP1", "TREM1", "VEGFA", "PDCD1", "MMP9", "IL6", "CCL2", "CX3CR1", "TIE2", "TGFβ1", 
+                      "NLRP3", "TYRO3", "AXL", "CSF1R", "FASLG", "PDCD1LG2", "MMP14", "IL1A", "CXCL8", "TNF", 
+                      "S100A8", "CD14", "CD68", "FPR1", "CAT")
+      ,"TAM_M2like" = c(
+        "PPARG", "CD36", "CCL18", "F13A1", "STAB1", "VSIG4", "MSR1", "FOLR2", "CD209", "CLEC10A",
+        "MAF", "C1QA", "TIMP1", "CD68", "SLC11A1", "EMP1", "MRC2", "CD14", "AIF1", "GAS6",
+        "LGALS3", "FABP5", "MS4A4A",
+        "CD163", "MRC1", "ARG1", "PPARG", "IL10", "VEGFA", "TGFβ1", "CSF1R",
+        "CD163", "MRC1", "ARG1", "PPARG", "IL10", "VEGFA", "CSF1R", "TGFBR2", "IL13RA1", "HIF1A",
+        "CMA1", "CLCF1", "CD200R", "MARCO", "TLR2", "IL4R", "EGR2", "GATA3", "SOCS3", "TNFRSF25", 
+        "MMP12", "AIM2", "FOLR2", "P2RX7", "CHIT1", "VNN1", "CYP1B1", "PTGS2", "F13A1", "PTX3", 
+        "TGFBR1", "TIMP1", "ITGAM", "TLR4", "IRF4")
+      
+      ,"TAM_M1like" = c(
+        "CXCL10", "STAT1", "GBP1", "IFIT3", "IRF1", "CD86", "CD40", "NFKBIA", "IDO1", "CCL3",
+        "CCL4", "NLRP3", "IFI44L", "HLA-DPB1", "HLA-DQA1", "ISG15", "CD74", "PSMB8", "CIITA", "OASL",
+        "NOS2", "IL12B", "CD80", "CD86", "IRF5", "TNF", "IL1B", "CXCL9", "CXCL10",
+        "NOS2", "IL12B", "CD80", "CD86", "IRF5", "CXCL9", "CXCL10", "TNF", "IL1B", "NLRP3", 
+        "TLR4", "CXCL11", "IFNG", "IL6", "IFIT1", "MMP9", "CCL5", "RANTES", "IL18", "CD64", 
+        "NF-kB", "TREM1", "MDA5", "TRIM25", "STAT1", "STAT2", "TRAF6", "C1QA", "ATF3", "IFNGR1",
+        "FOS", "JUN", "IRF1", "BTK")
+
+    )
+  )
+
+
+# We add plasma cells and modify the lists for monocytes and neutrophils in the immune marker list
+markerslist_immune_modified <- HieraType::markerslist_immune
+
+markerslist_immune_modified$plasma = markerslist_l1$plasma
+
+# Make new marker lists for neutrophil
+markerslist_Neu <- 
+  HieraType::make_markerslist(
+    index_marker = list(
+      "neutrophil" = c("MPO", "FCGR3B", "CSF3R")
+    ),
+    predictors = list(
+        "neutrophil" = c("S100A12", "CAMP", "BPI", "LTF", "DEFA3", "RETN", "OLFM4", "MMP8", "FPR1", "FPR2",
+                       "CXCR2", "CXCL1", "CXCL8", "IL1R2", "CD177", "S100A11", "HP", "CEACAM6", "RBP7", "ELF3",
+                       "SLC22A4", "SLC22A5", "ITGAX", "TNFRSF10C", "PI3", "MME", "RNASE3", "MS4A3", "SIGLEC5", "PRTN3",
+                       "AZU1", "ELANE", "CSF3R", "G0S2", "NAAA", "ALOX5", "MMP25", "SERPINB1", "SERPINB10", "CEACAM1",
+                       "NFKBIZ", "PLSCR1", "ADGRE3", "LYPD3", "TNFAIP6", "CD24", "PADI4", "TCN1", "LILRA3", "LILRB3",
+                       "CRISP3", "NFE2L2", "RNASE2", "RNASE6", "GNB2L1", "ARG1", "ATP6V0D2", "MGST1", "GZMK", "CD63",
+                       "CFD", "SERPINA1", "SLC25A37", "SLC11A1", "TLR8", "XBP1", 
+                       "DUSP6", "SCN3B", "CALR", "GFI1", "ZBTB16", "S100A8", "S100A9")
+    )
+  )
+
+# Add back to markers list
+markerslist_immune_modified$neutrophil <- markerslist_Neu$neutrophil
+markerslist_immune_modified <- markerslist_immune_modified[which(names(markerslist_immune_modified) != "monocyte")]
+
+# Restore markerslist class
+class(markerslist_immune_modified) <- unique(c(class(markerslist_immune_modified), "markerslist"))
+
+# Modify the T cell subtypes
+markerslist_cd4t_modified <- HieraType::markerslist_cd4tminor
+names(markerslist_cd4t_modified) <- dplyr::recode(names(markerslist_cd4t_modified),
+                                                  "cd4_th1" = "cd4_teff_th1",
+                                                  "cd4_th2" = "cd4_teff_th2",
+                                                  "cd4_th17" = "cd4_teff_th17")
+
+markerslist_cd8t_modified <- HieraType::markerslist_cd8tminor
+names(markerslist_cd8t_modified) <- dplyr::recode(names(markerslist_cd8t_modified),
+                                                  "cd8_cytotoxic" = "cd8_teff_cytotoxic")
+
+
+pipeline_io_mod <- HieraType::make_pipeline(
+  markerslists = list("l1" = markerslist_immune_modified,
+                      "lt" = HieraType::markerslist_tcellmajor,
+                      "lt4" = markerslist_cd4t_modified,
+                      "lt8" = markerslist_cd8t_modified,
+                      "m3" = markerslist_m3,
+                      "p2" = markerslist_p2
+  )
+  ,priors = list("lt" = "l1"
+                 ,"lt4" = "lt"
+                 ,"lt8" = "lt"
+                 ,"m3" = "l1"
+                 ,"p2" = "l1"
+                 ) 
+  ,priors_category = list("lt" = "tcell"
+                          ,"lt4" = "cd4t"
+                          ,"lt8" = "cd8t"
+                          ,"m3" = "macrophage"
+                          ,"p2" = "plasma"
+  )
+)
+
+# Save this modified pipeline
+saveRDS(pipeline_io_mod, file = paste0(dimRed_dir, "/Data/pipeline_io_mod.rds"))
+
+# Extract immune cells as defined by unsupervised clustering
+leiden_immune <- c(3, 6, 15, 16)
+idx <- which(seu.obj@meta.data$seurat_clusters %in% leiden_immune)
+
+# Also extract immune cell IDs from cells that had been clustered with fibroblasts
+extra_immune <- rownames(fibro_assignments)[which(fibro_assignments$seurat_clusters %in% c(2,3,5:8,10:12))]
+idx_immune <- which(seu.obj@meta.data$cell_id %in% extra_immune)
+
+idx <- c(idx,idx_immune)
+
+# Run HieraType to subtype immune cells
+immune_typing <- 
+run_pipeline(pipeline = pipeline_io_mod
+             ,counts_matrix = Matrix::t(seu.obj[["RNA"]]@counts[,idx])
+             ,adjacency_matrix = as(seu.obj@graphs$umapgrph[idx,idx]
+                                    ,"CsparseMatrix")
+             ,celltype_call_threshold = 0.5
+             )
+saveRDS(immune_typing, file = paste0(dimRed_dir, "/Data/immune_hieratype_res.rds"))
+
+# Add to Seurat object
+seu.obj@meta.data$leiden_hieratype <- NA
+seu.obj@meta.data[immune_typing$post_probs$l1$cell_ID, "leiden_hieratype"] <-  immune_typing$post_probs$l1$celltype_granular # Use the granular cell type since we're confident these are immune cells.
+
+```
+
+Use a variety of plots to evaluate the immune cell typing.
+```{r}
+#| label: plot_hieratype_leiden_immune
+#| message: false
+#| warning: false
+#| eval: false
+
+# Plot it in XY space with random colors
+set.seed(2024)
+my_pal <- sample(colors(distinct = TRUE), length(unique(seu.obj@meta.data$leiden_hieratype)))
+names(my_pal) <- unique(seu.obj@meta.data$leiden_hieratype)
+ggplot(seu.obj@meta.data[order(is.na(seu.obj@meta.data$leiden_hieratype), decreasing = T),],
+        aes(x = x_slide_mm, y = y_slide_mm, 
+            color = leiden_hieratype)) +  
+    geom_point(size = 0.1) +  
+  scale_color_manual(values = my_pal, na.value = "lightgrey") +
+    theme_classic() +  
+    coord_fixed() +  
+    guides(colour = guide_legend(override.aes = list(size=10)))
+ggsave(filename = paste0(dimRed_dir, "/Plots/XY_leiden_hieratype.png"),
+       width = 8, height = 16, units = "in")
+
+# Plot each cell type separately
+for (ct in unique(seu.obj@meta.data$leiden_hieratype)){
+  if(is.na(ct)){next}
+  ggplot(seu.obj@meta.data,
+         aes(x = x_slide_mm, y = y_slide_mm)) +  
+    geom_point(size = 0.05, color = "lightgrey") +  
+    geom_point(data = seu.obj@meta.data %>% filter(leiden_hieratype == ct),
+               aes(x = x_slide_mm, y = y_slide_mm),
+               size = 0.05, color = "red") +
+    theme_classic() +  
+    coord_fixed() +  
+    ggtitle(paste0("Leiden hieratype: ", ct))
+  ggsave(filename = paste0(dimRed_dir, "/Plots/XY_leiden_hieratype_", ct, ".png"),
+         width = 8, height = 16, units = "in")
+}
+
+
+# Plot it in UMAP space
+DimPlot(seu.obj, group.by = "leiden_hieratype", reduction = "umap", label = T) +
+  scale_color_manual(values = my_pal, na.value = "lightgrey") + coord_fixed()
+ggsave(filename = paste0(dimRed_dir, "/Plots/umap_leiden_hieratype.png"),
+       width = 16, height = 12, units = "in")
+
+# Plot each cell type separately in UMAP space
+plot.df <- seu.obj@meta.data
+plot.df$UMAP1 <- seu.obj@reductions$umap@cell.embeddings[,1]
+plot.df$UMAP2 <- seu.obj@reductions$umap@cell.embeddings[,2]
+
+for (ct in unique(plot.df$leiden_hieratype)){
+  ggplot(plot.df,
+         aes(x = UMAP1, y = UMAP2)) +  
+    geom_point(size = 0.05, alpha = 0.5, color = "lightgrey") +  
+    geom_point(data = plot.df %>% filter(leiden_hieratype == ct),
+               aes(x = UMAP1, y = UMAP2),
+               size = 0.05, color = "red") +
+    theme_classic() +  
+    coord_fixed() +  
+    ggtitle(paste0("Leiden hieratype: ", ct))
+  ggsave(filename = paste0(dimRed_dir, "/Plots/UMAP_leiden_hieratype_", ct, ".png"),
+         width = 10, height = 8, units = "in")
+}
+
+# Marker heatmap
+## prepare data for marker gene heatmap:
+fc_subclus_ctl_gran <- clusterwise_foldchange_metrics(seu.obj[["RNA"]]@counts[,!(is.na(seu.obj@meta.data$leiden_hieratype))]
+                                                      ,metadata = seu.obj@meta.data[!(is.na(seu.obj@meta.data$leiden_hieratype)),]
+                                                      ,cluster_column = "leiden_hieratype"
+)
+# subtract background from the mean per-cluster expression profiles:
+neg_counts = seu.obj@assays$negprobes$counts
+for (name in unique(seu.obj@meta.data$leiden_hieratype)) {
+  if(is.na(name)){next}
+  isthiscelltype <- seu.obj@meta.data$leiden_hieratype == name
+  isthiscelltype[is.na(isthiscelltype)] <- FALSE #NAs not handled well in subsetting in next step
+  meannegthiscelltype <- Matrix::mean(neg_counts[, isthiscelltype])
+  
+  fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] <- 
+    pmax(fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] - meannegthiscelltype, 0)
+}
+# create the heatmap:
+hm_lh <- add_ncells(marker_heatmap(fc_subclus_ctl_gran))
+
+png(filename = paste0(dimRed_dir, "/Plots/heatmap_leiden_hieratype_negRemoved.png"),
+    width = 24, height = 8, units = "in", res = 300)
+print(hm_lh)
+dev.off()
+
+# Save results file
+results_list$leiden_hieratype_color_pal <- my_pal
+saveRDS(results_list, results_list_file)
+
+```
+
+HieraType and unsupervised cell type calls in space:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/XY_leiden_hieratype.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(dimRed_dir, "Plots", paste0("XY_leiden_hieratype_*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'XY_leiden_hieratype_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+HieraType and unsupervised cell type calls in UMAP space:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/umap_leiden_hieratype.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(dimRed_dir, "Plots", paste0("UMAP_leiden_hieratype*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'UMAP_leiden_hieratype_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+Top markers per cluster for unsupervised and HieraType annotations:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/heatmap_leiden_hieratype_negRemoved.png"))
+```
+
+
+#### Tumor subcluster
+
+The initial unsupervised clustering had more tumor subclusters than we'll use in this analysis. Here we take all the tumor cells, repeat initial preprocessing so that highly variable genes are chosen based on the tumor cells, and use Leiden clustering with low resolution to separate the tumor cells into about five major clusters.
+```{r}
+#| label: run_leiden_tumor_cluster
+#| message: false
+#| warning: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postLeiden)
+}
+
+# Subset the seurat object to only include tumor cells
+tumor_leiden <- c(0, 1, 4, 5, 7, 8, 10, 12:14)
+tumor_idx <- which(seu.obj@meta.data$seurat_clusters %in% tumor_leiden)
+seu.tumor <- seu.obj[,tumor_idx]
+
+# Repeat preprocessing, dimension reduction, and leiden clustering
+seu.tumor <- NormalizeData(seu.tumor, 
+                         normalization.method = "RC", 
+                         scale.factor = mean(seu.tumor@meta.data$nCount_RNA))
+seu.tumor <- FindVariableFeatures(seu.tumor, 
+                                selection.method = "vst", 
+                                nfeatures = 3000)
+seu.tumor <- ScaleData(seu.tumor)
+seu.tumor <- RunPCA(seu.tumor, 
+                  features = VariableFeatures(seu.tumor))
+umapobj <- make_umap(seu.tumor@reductions$pca@cell.embeddings)
+
+seu.tumor[["umap"]] <- umapobj$ump
+seu.tumor[["umapgrph"]] <- Seurat::as.Graph(umapobj$grph)
+seu.tumor <- Seurat::FindClusters(seu.tumor, graph.name = "umapgrph", resolution = 0.2)
+
+# Save this Seurat object and assignments to files
+saveRDS(seu.tumor, file = paste0(objects_dir, "/seurat_tumor_obj.rds"))
+tumor_assignments <- seu.tumor@meta.data[,c("cell_ID", "seurat_clusters")]
+saveRDS(tumor_assignments, file = paste0(celltyping_dir, "/Data/tumor_cluster_assignments.rds"))
+
+```
+Plot tumor subclusters for evaluation.
+```{r}
+#| label: plot_tumor_subcluster
+#| message: false
+#| warning: false
+#| eval: false
+
+# Plot it in XY space with random colors
+set.seed(2025)
+my_pal <- sample(colors(distinct = TRUE), length(unique(seu.tumor@meta.data$seurat_clusters)))
+names(my_pal) <- unique(seu.tumor@meta.data$seurat_clusters)
+ggplot(seu.tumor@meta.data,
+        aes(x = x_slide_mm, y = y_slide_mm, 
+            color = as.factor(seurat_clusters))) +  
+    geom_point(size = 0.1) +  
+  scale_color_manual(values = my_pal, na.value = "lightgrey") +
+    theme_classic() +  
+    coord_fixed() +  
+    guides(colour = guide_legend(override.aes = list(size=10)))
+ggsave(filename = paste0(dimRed_dir, "/Plots/XY_tumor_subclusters.png"),
+       width = 8, height = 16, units = "in")
+
+# Plot each cell type separately
+for (ct in unique(seu.tumor@meta.data$seurat_clusters)){
+  if(is.na(ct)){next}
+  ggplot(seu.tumor@meta.data,
+         aes(x = x_slide_mm, y = y_slide_mm)) +  
+    geom_point(size = 0.05, color = "lightgrey") +  
+    geom_point(data = seu.tumor@meta.data %>% filter(seurat_clusters == ct),
+               aes(x = x_slide_mm, y = y_slide_mm),
+               size = 0.05, color = "red") +
+    theme_classic() +  
+    coord_fixed() +  
+    ggtitle(paste0("Tumor subtype: ", ct))
+  ggsave(filename = paste0(dimRed_dir, "/Plots/XY_tumor_subtype_", ct, ".png"),
+         width = 8, height = 16, units = "in")
+}
+
+
+# Plot it in UMAP space
+DimPlot(seu.tumor, group.by = "seurat_clusters", reduction = "umap", label = T) +
+  scale_color_manual(values = my_pal, na.value = "lightgrey") + coord_fixed()
+ggsave(filename = paste0(dimRed_dir, "/Plots/umap_tumor_subtype.png"),
+       width = 16, height = 12, units = "in")
+
+# Plot each cell type separately in UMAP space
+plot.df <- seu.tumor@meta.data
+plot.df$UMAP1 <- seu.tumor@reductions$umap@cell.embeddings[,1]
+plot.df$UMAP2 <- seu.tumor@reductions$umap@cell.embeddings[,2]
+
+for (ct in unique(plot.df$seurat_clusters)){
+  ggplot(plot.df,
+         aes(x = UMAP1, y = UMAP2)) +  
+    geom_point(size = 0.05, alpha = 0.5, color = "lightgrey") +  
+    geom_point(data = plot.df %>% filter(seurat_clusters == ct),
+               aes(x = UMAP1, y = UMAP2),
+               size = 0.05, color = "red") +
+    theme_classic() +  
+    coord_fixed() +  
+    ggtitle(paste0("Tumor subtype: ", ct))
+  ggsave(filename = paste0(dimRed_dir, "/Plots/UMAP_tumor_subtype_", ct, ".png"),
+         width = 10, height = 8, units = "in")
+}
+
+# Marker heatmap
+## prepare data for marker gene heatmap:
+fc_subclus_ctl_gran <- clusterwise_foldchange_metrics(seu.tumor[["RNA"]]@counts
+                                                      ,metadata = seu.tumor@meta.data
+                                                      ,cluster_column = "seurat_clusters"
+)
+# subtract background from the mean per-cluster expression profiles:
+neg_counts_tumor = seu.tumor@assays$negprobes$counts
+for (name in unique(seu.tumor@meta.data$seurat_clusters)) {
+  if(is.na(name)){next}
+  isthiscelltype <- seu.tumor@meta.data$seurat_clusters == name
+  meannegthiscelltype <- Matrix::mean(neg_counts_tumor[, isthiscelltype])
+  
+  fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] <- 
+    pmax(fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] - meannegthiscelltype, 0)
+}
+# create the heatmap:
+hm_lh <- add_ncells(marker_heatmap(fc_subclus_ctl_gran))
+
+png(filename = paste0(dimRed_dir, "/Plots/heatmap_tumor_subcluster_negRemoved.png"),
+    width = 24, height = 8, units = "in", res = 300)
+print(hm_lh)
+dev.off()
+
+# Save results file
+results_list$tumor_subcluster_color_pal <- my_pal
+saveRDS(results_list, results_list_file)
+
+```
+Tumor subclusters in space:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/XY_tumor_subclusters.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(dimRed_dir, "Plots", paste0("XY_tumor_subtype_*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'XY_tumor_subtype_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+Tumor subclusters in UMAP space:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/umap_tumor_subtype.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(dimRed_dir, "Plots", paste0("UMAP_tumor_subtype*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'UMAP_tumor_subtype_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+Top marker genes per tumor subcluster:
+```{r}
+knitr::include_graphics(paste0(dimRed_dir, "/Plots/heatmap_tumor_subcluster_negRemoved.png"))
+```
+
+Based on the markers present, we'll label these five tumor clusters as follows:
+
+| Cell type | Evaluation | Name |
+|-----------|------------|-------------|
+| 0         |Top marker KRT16 is associated with metastasis and tumor aggressiveness         |KRT16+ tumor       |
+| 1         |Top marker HPD is associated with metabolism; GJA1 is a gap junction protein frequently down-regulated in aggressive tumors        |HPD+ tumor       |
+| 2         |Top markers are histones          |Proliferating tumor             |
+| 3         |Top markers are associated with detoxification; top marker HPGD is typically down in breast cancers          |PGC+ tumor             |
+| 4         |Key markers are EMT-related          |ITGB6+ tumor             |
+
+
+```{r}
+#| label: add_tumor_subtype_names
+#| message: false
+#| warning: false
+#| eval: false
+
+# Follows table above. 
+tumor_assignments <- readRDS(file = paste0(celltyping_dir, "/Data/tumor_cluster_assignments.rds"))
+tumor_assignments$minor_cell_type <- NA
+tumor_assignments$minor_cell_type[which(tumor_assignments$seurat_clusters == 0)] <- "KRT16+ tumor"
+tumor_assignments$minor_cell_type[which(tumor_assignments$seurat_clusters == 1)] <- "HPD+ tumor"
+tumor_assignments$minor_cell_type[which(tumor_assignments$seurat_clusters == 2)] <- "Proliferating tumor"
+tumor_assignments$minor_cell_type[which(tumor_assignments$seurat_clusters == 3)] <- "PGC+ tumor"
+tumor_assignments$minor_cell_type[which(tumor_assignments$seurat_clusters == 4)] <- "ITGB6+ tumor"
+saveRDS(tumor_assignments, file = paste0(celltyping_dir, "/Data/tumor_cluster_assignments.rds"))
+
+```
+
+
+
+
+#### Vasculature subcluster
+
+The initial Leiden clustering had only one vasculature cluster, but from previous experience with this sample we expect that we should be able to identify pericytes and endothelial cells separately. Here we take the vasculature cells, repeat initial preprocessing so that highly variable genes are chosen based on these cells, and use unsupervised clustering to separate these cells into two or three clusters.
+```{r}
+#| label: run_leiden_vasculature_cluster
+#| message: false
+#| warning: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postLeiden)
+}
+
+# Subset the seurat object to only include tumor cells
+vasc_leiden <- c(9)
+vasc_idx <- which(seu.obj@meta.data$seurat_clusters %in% vasc_leiden)
+seu.vasc <- seu.obj[,vasc_idx]
+
+# Repeat preprocessing, dimension reduction, and leiden clustering
+seu.vasc <- NormalizeData(seu.vasc, 
+                         normalization.method = "RC", 
+                         scale.factor = mean(seu.vasc@meta.data$nCount_RNA))
+seu.vasc <- FindVariableFeatures(seu.vasc, 
+                                selection.method = "vst", 
+                                nfeatures = 3000)
+seu.vasc <- ScaleData(seu.vasc)
+seu.vasc <- RunPCA(seu.vasc, 
+                  features = VariableFeatures(seu.vasc))
+umapobj <- make_umap(seu.vasc@reductions$pca@cell.embeddings)
+
+seu.vasc[["umap"]] <- umapobj$ump
+seu.vasc[["umapgrph"]] <- Seurat::as.Graph(umapobj$grph)
+seu.vasc <- Seurat::FindClusters(seu.vasc, graph.name = "umapgrph", resolution = 0.1)
+
+# Save this Seurat object and assignments to files
+saveRDS(seu.vasc, file = paste0(objects_dir, "/seurat_vasc_obj.rds"))
+vasc_assignments <- seu.vasc@meta.data[,c("cell_ID", "seurat_clusters")]
+saveRDS(vasc_assignments, file = paste0(celltyping_dir, "/Data/vasc_cluster_assignments.rds"))
+
+# Save a few quick plots for evaluation
+# Plot it in XY space with random colors
+set.seed(2025)
+my_pal <- sample(colors(distinct = TRUE), length(unique(seu.vasc@meta.data$seurat_clusters)))
+names(my_pal) <- unique(seu.vasc@meta.data$seurat_clusters)
+ggplot(seu.vasc@meta.data,
+        aes(x = x_slide_mm, y = y_slide_mm, 
+            color = as.factor(seurat_clusters))) +  
+    geom_point(size = 0.01) +  
+  scale_color_manual(values = my_pal, na.value = "lightgrey") +
+    theme_classic() +  
+    coord_fixed() +  
+    guides(colour = guide_legend(override.aes = list(size=10)))
+ggsave(filename = paste0(celltyping_dir, "/Plots/XY_vasculature_subclusters.png"),
+       width = 8, height = 16, units = "in")
+
+# Plot each cell type separately
+for (ct in unique(seu.vasc@meta.data$seurat_clusters)){
+  if(is.na(ct)){next}
+  ggplot(seu.vasc@meta.data,
+         aes(x = x_slide_mm, y = y_slide_mm)) +  
+    geom_point(size = 0.05, color = "lightgrey") +  
+    geom_point(data = seu.vasc@meta.data %>% filter(seurat_clusters == ct),
+               aes(x = x_slide_mm, y = y_slide_mm),
+               size = 0.05, color = "red") +
+    theme_classic() +  
+    coord_fixed() +  
+    ggtitle(paste0("Vascular subtype: ", ct))
+  ggsave(filename = paste0(celltyping_dir, "/Plots/XY_vasculature_subtype_", ct, ".png"),
+         width = 8, height = 16, units = "in")
+}
+
+
+
+# UMAP
+DimPlot(seu.vasc) + coord_fixed()
+ggsave(file = paste0(celltyping_dir, "/Plots/UMAP_vasculature.png"))
+
+# Marker heatmap
+## prepare data for marker gene heatmap:
+fc_subclus_ctl_gran <- clusterwise_foldchange_metrics(seu.vasc[["RNA"]]@counts
+                                                      ,metadata = seu.vasc@meta.data
+                                                      ,cluster_column = "seurat_clusters"
+)
+# subtract background from the mean per-cluster expression profiles:
+neg_counts_vasc = seu.vasc@assays$negprobes$counts
+for (name in unique(seu.vasc@meta.data$seurat_clusters)) {
+  if(is.na(name)){next}
+  isthiscelltype <- seu.vasc@meta.data$seurat_clusters == name
+  meannegthiscelltype <- Matrix::mean(neg_counts_vasc[, isthiscelltype])
+  
+  fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] <- 
+    pmax(fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] - meannegthiscelltype, 0)
+}
+# create the heatmap:
+hm_lh <- add_ncells(marker_heatmap(fc_subclus_ctl_gran))
+
+png(filename = paste0(celltyping_dir, "/Plots/heatmap_vasculature_subcluster_negRemoved.png"),
+    width = 12, height = 4, units = "in", res = 300)
+print(hm_lh)
+dev.off()
+
+
+```
+
+Vasculature subclusters in space:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_vasculature_subclusters.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(celltyping_dir, "Plots", paste0("XY_vasculature_subtype_*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'XY_vasculature_subtype_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+Vasculature subtypes in UMAP space:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/UMAP_vasculature.png"))
+```
+
+Top markers for vasculature subtypes:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/heatmap_vasculature_subcluster_negRemoved.png"))
+```
+
+Based on the markers present, we'll label these three vasculature clusters as follows:
+
+| Cell type | Evaluation | Name |
+|-----------|------------|-------------|
+| 0         |Key markers PDGFRB, CSPG4        |Pericytes       |
+| 1         |Key markers NOTCH4, SHANK3, EGFL7       |Endothelial       |
+| 2         |Top markers are histones          |Proliferating vasculature             |
+
+```{r}
+#| label: add_vascular_subtype_names
+#| message: false
+#| warning: false
+#| eval: false
+
+# Follows table above. 
+vasc_assignments <- readRDS(file = paste0(celltyping_dir, "/Data/vasc_cluster_assignments.rds"))
+vasc_assignments$minor_cell_type <- NA
+vasc_assignments$minor_cell_type[which(vasc_assignments$seurat_clusters == 0)] <- "Pericytes"
+vasc_assignments$minor_cell_type[which(vasc_assignments$seurat_clusters == 1)] <- "Endothelial cells"
+vasc_assignments$minor_cell_type[which(vasc_assignments$seurat_clusters == 2)] <- "Proliferating vasculature"
+saveRDS(vasc_assignments, file = paste0(celltyping_dir, "/Data/vasc_cluster_assignments.rds"))
+
+```
+
+:::
+
+#### Merging annotations
+
+Here we join all the above annotations into the full Seurat object. We make two cell typing columns - one shows major cell types (tumor, T cell, etc) and the second shows the finer minor cell subtypes. We also make standard plots to show each of these.
+
+```{r}
+#| label: merge_plot_cell_subtypes
+#| message: false
+#| warning: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postLeiden)
+}
+
+# Read in cell subtyping results
+fibro_assignments <- readRDS(file = paste0(celltyping_dir, "/Data/fibro_cluster_assignments.rds"))
+immune_typing <- readRDS(file = paste0(dimRed_dir, "/Data/immune_hieratype_res.rds"))
+tumor_assignments <- readRDS(file = paste0(celltyping_dir, "/Data/tumor_cluster_assignments.rds"))
+vasc_assignments <- readRDS(file = paste0(celltyping_dir, "/Data/vasc_cluster_assignments.rds"))
+
+# Extract immune typing assignments to same format as other subtypings
+immune_assignments <- as.data.frame(immune_typing$post_probs$l1)
+row.names(immune_assignments) <- immune_assignments$cell_ID
+
+# Add fine subtypes to seurat object
+seu.obj@meta.data$minor_cell_type <- NA
+seu.obj@meta.data[fibro_assignments$cell_ID, "minor_cell_type"] <- fibro_assignments$minor_cell_type
+seu.obj@meta.data[tumor_assignments$cell_ID, "minor_cell_type"] <- tumor_assignments$minor_cell_type
+seu.obj@meta.data[vasc_assignments$cell_ID, "minor_cell_type"] <- vasc_assignments$minor_cell_type
+seu.obj@meta.data[immune_assignments$cell_ID, "minor_cell_type"] <- immune_assignments$celltype_granular
+
+# Two clusters that did not get subtyped
+seu.obj@meta.data$minor_cell_type[which(seu.obj@meta.data$seurat_clusters == 11)] <- "Necrotic cells"
+seu.obj@meta.data$minor_cell_type[which(seu.obj@meta.data$seurat_clusters == 17)] <- "Unknown"
+
+# Add major types
+seu.obj@meta.data$major_cell_type <- seu.obj@meta.data$minor_cell_type
+seu.obj@meta.data$major_cell_type <- dplyr::recode(seu.obj@meta.data$major_cell_type,
+                                                   "cd4_naive" = "Tcell",
+                                                   "cd4_tcm" = "Tcell",
+                                                   "cd4_teff_th1" = "Tcell",
+                                                   "cd4_teff_th2" = "Tcell",
+                                                   "cd4_teff_th17" = "Tcell",
+                                                   "cd4_tem" = "Tcell",
+                                                   "cd4_treg" = "Tcell",
+                                                   "cd8_exhausted" = "Tcell",
+                                                   "cd8_naive" = "Tcell",
+                                                   "cd8_tcm" = "Tcell",
+                                                   "cd8_teff_cytotoxic" = "Tcell",
+                                                   "cd8_tem" = "Tcell",
+                                                   "Endothelial cells" = "Vasculature",
+                                                   "HPD+ tumor" = "Tumor",
+                                                   "Inflammatory CAFs" = "Fibroblast",
+                                                   "Interferon-activated CAFs" = "Fibroblast",
+                                                   "KRT16+ tumor" = "Tumor",
+                                                   "ITGB6+ tumor" = "Tumor",
+                                                   "Matrix fibroblasts" = "Fibroblast",
+                                                   "Myofibroblasts" = "Fibroblast",
+                                                   "Pericytes" = "Vasculature",
+                                                   "PGC+ tumor" = "Tumor",
+                                                   "Plasma_IgA" = "Plasma",
+                                                   "Plasma_IgG" = "Plasma",
+                                                   "Proliferating tumor" = "Tumor",
+                                                   "Proliferating vasculature" = "Vasculature",
+                                                   "TAM_M1like" = "Macrophage",
+                                                   "TAM_M2like" = "Macrophage",
+                                                   "TAM_SPP1" = "Macrophage")
+
+# Save seurat object with cell types
+results_list$seurat_file_postCellTyping <- paste0(objects_dir, "/seurat_object_postCellTyping.rds")
+saveRDS(results_list, results_list_file)
+saveRDS(seu.obj, results_list$seurat_file_postCellTyping)
+
+```
+
+```{r}
+#| label: plot_major_minor_cellTypes
+#| message: false
+#| warning: false
+#| eval: false
+
+for(ct in c("major_cell_type", "minor_cell_type")){
+
+  # Plot it in XY space with random colors
+  set.seed(2025)
+  my_pal <- sample(colors(distinct = TRUE), length(unique(seu.obj@meta.data[,ct])))
+  names(my_pal) <- unique(seu.obj@meta.data[,ct])
+  ggplot(seu.obj@meta.data,
+         aes(x = x_slide_mm, y = y_slide_mm, 
+             color = get(ct))) +  
+    geom_point(size = 0.001) +  
+    scale_color_manual(values = my_pal, na.value = "lightgrey", name = ct) +
+    theme_classic() +  
+    coord_fixed() +  
+    guides(colour = guide_legend(override.aes = list(size=10)))
+  ggsave(filename = paste0(celltyping_dir, "/Plots/XY_", ct, ".png"),
+         width = 8, height = 16, units = "in")
+  
+  # Plot each cell type separately
+  for (ct1 in unique(seu.obj@meta.data[,ct])){
+    if(is.na(ct1)){next}
+    ggplot(seu.obj@meta.data,
+           aes(x = x_slide_mm, y = y_slide_mm)) +  
+      geom_point(size = 0.05, color = "lightgrey") +  
+      geom_point(data = seu.obj@meta.data %>% filter(get(ct) == ct1),
+                 aes(x = x_slide_mm, y = y_slide_mm),
+                 size = 0.05, color = "red") +
+      theme_classic() +  
+      coord_fixed() +  
+      ggtitle(paste0(ct, ": ", ct1))
+    ggsave(filename = paste0(celltyping_dir, "/Plots/XY_", ct, "_", ct1, ".png"),
+           width = 8, height = 16, units = "in")
+  }
+  
+  
+  # Plot it in UMAP space
+  DimPlot(seu.obj, group.by = ct, reduction = "umap", label = T) +
+    scale_color_manual(values = my_pal, na.value = "lightgrey") + coord_fixed()
+  ggsave(filename = paste0(celltyping_dir, "/Plots/umap_", ct, ".png"),
+         width = 16, height = 12, units = "in")
+  
+  # Plot each cell type separately in UMAP space
+  plot.df <- seu.obj@meta.data
+  plot.df$UMAP1 <- seu.obj@reductions$umap@cell.embeddings[,1]
+  plot.df$UMAP2 <- seu.obj@reductions$umap@cell.embeddings[,2]
+  
+  for (ct1 in unique(plot.df[,ct])){
+    ggplot(plot.df,
+           aes(x = UMAP1, y = UMAP2)) +  
+      geom_point(size = 0.05, alpha = 0.5, color = "lightgrey") +  
+      geom_point(data = plot.df %>% filter(get(ct) == ct1),
+                 aes(x = UMAP1, y = UMAP2),
+                 size = 0.05, color = "red") +
+      theme_classic() +  
+      coord_fixed() +  
+      ggtitle(paste0(ct, ": ", ct1))
+    ggsave(filename = paste0(celltyping_dir, "/Plots/UMAP_", ct, "_", ct1, ".png"),
+           width = 10, height = 8, units = "in")
+  }
+  
+  # Marker heatmap
+  ## prepare data for marker gene heatmap:
+  fc_subclus_ctl_gran <- clusterwise_foldchange_metrics(seu.obj[["RNA"]]@counts
+                                                        ,metadata = seu.obj@meta.data
+                                                        ,cluster_column = ct
+  )
+  # subtract background from the mean per-cluster expression profiles:
+  neg_counts = seu.obj@assays$negprobes$counts
+  for (name in unique(seu.obj@meta.data[,ct])) {
+    if(is.na(name)){next}
+    isthiscelltype <- seu.obj@meta.data[,ct] == name
+    meannegthiscelltype <- Matrix::mean(neg_counts[, isthiscelltype])
+    
+    fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] <- 
+      pmax(fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] - meannegthiscelltype, 0)
+  }
+  # create the heatmap:
+  hm_lh <- add_ncells(marker_heatmap(fc_subclus_ctl_gran))
+  
+  png(filename = paste0(celltyping_dir, "/Plots/heatmap_", ct, "_negRemoved.png"),
+      width = 24, height = 8, units = "in", res = 300)
+  print(hm_lh)
+  dev.off()
+  
+  # Save results file
+  results_list[paste0(ct, "_color_pal")] <- my_pal
+}
+saveRDS(results_list, results_list_file)
+
+
+```
+
+Major cell types:
+
+Spatial plots:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_major_cell_type.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(dimRed_dir, "Plots", paste0("XY_major_cell_type_*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'XY_major_cell_type_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+UMAP plots:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/umap_major_cell_type.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(celltyping_dir, "Plots", paste0("UMAP_major_cell_type_*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'UMAP_major_cell_type_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+Top markers by cell type:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/heatmap_major_cell_type_negRemoved.png"))
+```
+
+
+Minor cell types:
+
+Spatial plots:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_minor_cell_type.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(celltyping_dir, "Plots", paste0("XY_minor_cell_type_*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'XY_minor_cell_type_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+UMAP plots:
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/umap_minor_cell_type.png"))
+```
+
+::: {.panel-tabset}
+
+```{r}
+#| output: asis
+files <- Sys.glob(file.path(celltyping_dir, "Plots", paste0("UMAP_minor_cell_type_*.png")))
+
+res <- purrr::map_chr(files, \(a_file) {
+    knitr::knit_child(text = c(
+      "## `r gsub('.png', '', strsplit(a_file, 'UMAP_minor_cell_type_')[[1]][2])`",
+      "",
+      "```{r}",
+      "#| echo: false",
+      "include_graphics(a_file)",
+      "```",
+      "",
+      ""
+    ), envir = environment(), quiet = TRUE)
+  })
+
+cat(res, sep = '\n')
+```
+:::
+
+Top markers per cell type
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/heatmap_minor_cell_type_negRemoved.png"))
+```
+
+### Save annotated data
+Here we save annotated data into basic files for some of the downstream analyses that won't use the Seurat object.
+
+```{r}
+#| label: save_basic_files
+#| echo: true
+#| warning: false
+#| message: true
+#| eval: false
+
+# if there's no seurat object, read it in
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+# Save raw expression matrix
+exp_mat <- seu.obj@assays$RNA$counts
+saveRDS(exp_mat, file = paste0(objects_dir, "/raw_exp_mat.rds"))
+
+# Save xy positions
+xy <- seu.obj@meta.data[, c("x_slide_mm", "y_slide_mm")]
+saveRDS(xy, file = paste0(objects_dir, "/xy.rds"))
+
+# Save cell types
+ct <- seu.obj@meta.data[, c("major_cell_type", "minor_cell_type")]
+saveRDS(ct, file = paste0(objects_dir, "/cell_types.rds"))
+
+```
+
+
+</details>
+
+## Publication Quality Plots
+
+In this final section we include the code to make high quality plots that appear in the manuscript.
+
+### Minor cell types
+We make a nicer plot of the minor cell types, with cell type colors chosen to keep similar cell types in the same families.
+
+```{r}
+#| label: plot_minor_subtypes_xy
+#| message: false
+#| warning: false
+#| eval: false
+
+if(!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+if("LUM+ tumor" %in% seu.obj$minor_cell_type){
+  seu.obj$minor_cell_type <- dplyr::recode(
+    seu.obj@meta.data$minor_cell_type,
+    "LUM+ tumor" = "ITGB6+ tumor"
+  )
+}
+
+# Set up hand-selected color palette
+cell_colors <- c(
+  # Tumor cells
+  "HPD+ tumor" = "#E41A1C", "KRT16+ tumor" = "#FF6666", "ITGB6+ tumor" = "#FF9999",
+  "PGC+ tumor" = "#CC3333", "Proliferating tumor" = "#FF4C4C",
+  
+  # CD4 T cells
+  "cd4_naive" = "#377EB8", "cd4_tcm" = "#4DA3D4", "cd4_tem" = "#6BB7E3",
+  "cd4_teff_th1" = "#2C7FB8", "cd4_teff_th2" = "#5AAAE6", "cd4_teff_th17" = "#8CCBF2",
+  "cd4_treg" = "#1F78B4",
+  
+  # CD8 T cells
+  "cd8_naive" = "#66C2A5", "cd8_tcm" = "#41AE76", "cd8_tem" = "#238B45",
+  "cd8_teff_cytotoxic" = "#74C476", "cd8_exhausted" = "#A1D99B",
+  
+  # B cells & Plasma
+  "bcell" = "#984EA3", "Plasma_IgA" = "#BEAED4", "Plasma_IgG" = "#CAB2D6",
+  
+  # Myeloid & innate
+  "dendritic" = "#4DAF4A", "neutrophil" = "#78C679", "mast" = "#A6D96A",
+  "nk" = "#66BD63", "innate_lymphoid" = "#31A354",
+  
+  # Macrophages
+  "TAM_M1like" = "#FF7F00", "TAM_M2like" = "#FDB462", "TAM_SPP1" = "#E6550D",
+  
+  # Fibroblasts & CAFs
+  "Inflammatory CAFs" = "#999999", "Interferon-activated CAFs" = "#BDBDBD",
+  "Matrix fibroblasts" = "#D9D9D9", "Myofibroblasts" = "#737373",
+  
+  # Endothelial & vasculature
+  "Endothelial cells" = "#9ECAE1", "Proliferating vasculature" = "#6BAED6",
+  "Pericytes" = "#4292C6",
+  
+  # Necrotic & Unknown
+  "Necrotic cells" = "#CCCCCC", "Unknown" = "#E0E0E0"
+)
+# Save these as manually formatted minor cell type colors
+results_list$minor_cell_type_color_pal_manual <- cell_colors
+saveRDS(results_list, results_list_file)
+
+# Set cell type order to group similar types
+seu.obj@meta.data$minor_cell_type <- factor(seu.obj@meta.data$minor_cell_type,
+                                            levels = names(cell_colors))
+
+
+# Plot in xy
+ggplot(seu.obj@meta.data[idx,], aes(x_slide_mm, y_slide_mm, color = minor_cell_type)) +
+  geom_point(size = 0.01) +
+  scale_color_manual(values = cell_colors) +
+  theme_void() +
+  coord_fixed() +
+  guides(color = guide_legend(override.aes = list(size = 5)))
+ggsave(filename = paste0(celltyping_dir, "/Plots/XY_minorCellType_manualFormatting.png"),
+       height = 8, width = 8, units = "in", dpi = 400)
+
+
+# Plot two zoomed in regions with polygons
+zooms = results_list$zoom_regions
+meta <- seu.obj@meta.data
+# Read in polygons
+polygons <- fread(paste0(objects_dir, "/FlatFiles/flatFiles/BreastCancer/BreastCancer-polygons.csv.gz"))
+polygons$x_slide_mm <- polygons$x_global_px * 0.12028/1000 # Pixel to mm conversion for commercial instrument
+polygons$y_slide_mm <- polygons$y_global_px * 0.12028/1000
+
+# Merge in ct
+polygons <- merge(polygons, meta[,c("cell_ID", "minor_cell_type")], by.x = "cell", by.y = "cell_ID", all.y = T)
+
+# Plot for each zoom region
+for (zoom in zooms){
+  
+  
+idx <- which(
+  polygons$x_slide_mm > zoom$xmin &
+  polygons$x_slide_mm < zoom$xmax &
+  polygons$y_slide_mm > zoom$ymin &
+  polygons$y_slide_mm < zoom$ymax
+)
+
+scale_bar <- make_scale_bar_r(polygons[idx, c("x_slide_mm")], polygons[idx, "y_slide_mm"])
+  
+  ggplot(polygons[idx,],
+         aes(x_slide_mm, y_slide_mm, group = cell)) +
+    geom_polygon(aes(fill = minor_cell_type)) +
+    scale_fill_manual(values = cell_colors) +
+    theme_void() +  
+    coord_fixed() +  
+    theme(legend.position = "none") +
+    scale_bar$bg + 
+    scale_bar$rect + 
+    scale_bar$label
+  ggsave(paste0(celltyping_dir, "/Plots/XY_minor_cell_types_zoomed_", zoom$region, ".png"),
+         width = 4, height = 4, units = "in", dpi = 400)
+}
+
+# Heatmap with hand-selected color points and cell numbers
+fc_subclus_ctl_gran <- clusterwise_foldchange_metrics(seu.obj[["RNA"]]@counts
+                                                      ,metadata = seu.obj@meta.data
+                                                      ,cluster_column = "minor_cell_type"
+)
+# subtract background from the mean per-cluster expression profiles:
+neg_counts <- seu.obj@assays$negprobes$counts
+for (name in unique(seu.obj@meta.data[,"minor_cell_type"])) {
+  if(is.na(name)){next}
+  isthiscelltype <- seu.obj@meta.data[,"minor_cell_type"] == name
+  #isthiscelltype[is.na(isthiscelltype)] <- FALSE #NAs not handled well in subsetting in next step
+  meannegthiscelltype <- Matrix::mean(neg_counts[, isthiscelltype])
+  
+  fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] <- 
+    pmax(fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] - meannegthiscelltype, 0)
+}
+# create the heatmap:
+hm_lh <- add_ncells(marker_heatmap(fc_subclus_ctl_gran))
+
+
+# Extract the factor levels from the heatmap after add_ncells()
+labels_with_counts <- levels(hm_lh$data$cluster)  # after add_ncells()
+
+# Recover original names by stripping counts
+original_names <- gsub(" \\(.*\\)$", "", labels_with_counts)
+
+# Build dot data frame
+dot_df <- data.frame(
+  label = labels_with_counts,
+  color = cell_colors[original_names],
+  y = seq_along(labels_with_counts)  # matches factor order
+)
+
+# Add dots to the left of labels
+hm_lh +
+  geom_point(data = dot_df,
+             aes(x = -0.5, y = y),  # adjust x for left margin
+             color = dot_df$color, fill = dot_df$color,
+             size = 2) +
+  geom_vline(xintercept = 0, color = "black") +
+  #scale_y_continuous(breaks = dot_df$y, labels = dot_df$label) +
+  coord_cartesian(clip = "off") +  # prevent clipping
+  theme(axis.text.y = element_text(hjust = 1, size = 8),
+        plot.margin = margin(5, 5, 5, 5),  
+        axis.line.y = element_blank(),
+        axis.ticks.y = element_blank(),legend.position = "top",
+        legend.direction = "horizontal",
+        legend.title.position = "top",
+        axis.text.x = element_text(size = 8),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 8))
+ggsave(filename = paste0(celltyping_dir, "/Plots/marker_heatmap_minor_cell_type_formatted.png"),
+       width = 16, height = 8, units = "in", dpi = 400)
+
+
+```
+
+High quality spatial plot of minor cell types and two zoomed regions.
+
+:::{.panel-tabset}
+#### Full tissue
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_minorCellType_manualFormatting.png"))
+```
+
+#### Zoom region 1
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_minor_cell_types_zoomed_", "i", ".png"))
+```
+
+#### Zoom region 2
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_minor_cell_types_zoomed_", "ii", ".png"))
+```
+:::
+
+High quality top marker heatmap for minor cell types.
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/marker_heatmap_minor_cell_type_formatted.png"))
+```
+
+### Tumor subtypes
+
+We make a nicer spatial plot of just the five tumor subtypes, using colors chosen to contrast well. There are very few ITGB6+ tumor cells, so in order to ensure that they're visible we plot them on top.
+```{r}
+#| label: plot_tumor_subtypes_xy
+#| message: false
+#| warning: false
+#| eval: false
+
+if(!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+if("LUM+ tumor" %in% seu.obj$minor_cell_type){
+  seu.obj$minor_cell_type <- dplyr::recode(
+    seu.obj@meta.data$minor_cell_type,
+    "LUM+ tumor" = "ITGB6+ tumor"
+  )
+}
+
+# Use alphabet palette, but replace the dark fifth color with a brighter green
+# Also replace the third brownish color with a brighter red
+my_pal <- pals::alphabet(n = 5)
+my_pal[5] <- alphabet(n=7)[7]
+my_pal[3] <- alphabet(n=25)[15]
+names(my_pal) <- grep("tumor", unique(seu.obj$minor_cell_type), value = T)
+
+
+# Extract meta data
+meta <- seu.obj@meta.data
+
+# ITGB6+ tumor cells are very rare. Plot on top for visibility.
+
+# Plot it
+ggplot(meta %>% filter(major_cell_type != "Tumor"),
+        aes(x = x_slide_mm, y = y_slide_mm)) +  
+    geom_point(size = 0.01, color = "grey90") +  
+  geom_point(data = meta %>% filter(major_cell_type == "Tumor"),
+             aes(x_slide_mm, y_slide_mm, color = minor_cell_type),
+             size = 0.01) +
+   geom_point(data = meta %>% filter(minor_cell_type == "ITGB6+ tumor"),
+             aes(x_slide_mm, y_slide_mm, color = minor_cell_type),
+             size = 0.01) +
+  scale_color_manual(values = my_pal, name = "Tumor subtype") +
+    theme_void() +  
+    coord_fixed() +  
+    guides(colour = guide_legend(override.aes = list(size=10))) +
+  theme(legend.position = c(0,1),
+        legend.justification = c(0, 1),
+        legend.text=element_text(size=15),
+        legend.title = element_text(size = 20))
+ggsave(filename = paste0(celltyping_dir, "/Plots/XY_tumor_subclusters_highlighted.png"),
+       width = 8, height = 14, units = "in")
+
+# Plot two zoomed regions with polygons
+if(is.null(results_list$zoom_regions)){
+  zooms = list(
+    
+    "zoom1" = list('xmin' = 3.25,
+                   'xmax' = 5.25,
+                   'ymin' = 9,
+                   'ymax' = 11,
+                   'region' = 'i'),
+    
+    "zoom2" = list('xmin' = 2.5,
+                   'xmax' = 4.5,
+                   'ymin' = 3.5,
+                   'ymax' = 5.5,
+                   'region' = 'ii')
+  )
+  results_list$zoom_regions <- zooms
+  saveRDS(results_list, results_list_file)
+} else{
+  zooms <- results_list$zoom_regions
+}
+
+# Read in polygons
+polygons <- fread(paste0(objects_dir, "/FlatFiles/flatFiles/BreastCancer/BreastCancer-polygons.csv.gz"))
+polygons$x_slide_mm <- polygons$x_global_px * 0.12028/1000
+polygons$y_slide_mm <- polygons$y_global_px * 0.12028/1000
+
+# Merge in ct
+polygons <- merge(polygons, meta[,c("cell_ID", "minor_cell_type")], by.x = "cell", by.y = "cell_ID", all.y = T)
+
+# Plot for each zoom region
+for (zoom in zooms){
+  
+  idx <- which(
+    polygons$x_slide_mm > zoom$xmin &
+      polygons$x_slide_mm < zoom$xmax &
+      polygons$y_slide_mm > zoom$ymin &
+      polygons$y_slide_mm < zoom$ymax
+  )
+  
+  scale_bar <- make_scale_bar_r(polygons[idx, c("x_slide_mm")], polygons[idx, "y_slide_mm"])
+  
+  ggplot(polygons[idx,],
+         aes(x_slide_mm, y_slide_mm, group = cell)) +
+    geom_polygon(data = polygons[idx,] %>% filter(!grepl("tumor", polygons[idx, "minor_cell_type"])),
+                 aes(x_slide_mm, y_slide_mm, group = cell),
+                 fill = "grey90") +
+    geom_polygon(data = polygons[idx,] %>% filter(grepl("tumor", polygons[idx, "minor_cell_type"])),
+                 aes(x_slide_mm, y_slide_mm, group = cell, fill = minor_cell_type)) +
+    scale_fill_manual(values = my_pal) +
+    theme_void() +  
+    coord_fixed() +  
+    theme(legend.position = "none") +
+    scale_bar$bg + 
+    scale_bar$rect + 
+    scale_bar$label
+  ggsave(paste0(celltyping_dir, "/Plots/XY_tumorsOnly_zoomed_", zoom$region, ".png"),
+         width = 4, height = 4, units = "in", dpi = 400)
+}
+
+```
+
+High quality spatial plot of tumor subtypes and two zoomed regions.
+
+:::{.panel-tabset}
+#### Full tissue
+```{r}
+#| fig-height: 4
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_tumor_subclusters_highlighted.png"))
+```
+
+#### Zoom region 1
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_tumorsOnly_zoomed_", "i", ".png"))
+```
+
+#### Zoom region 2
+```{r}
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/XY_tumorsOnly_zoomed_", "ii", ".png"))
+```
+:::
+
+We also make a marker gene heatmap for the tumor subtypes. Use only genes expected to be more highly expressed in tumor cells, as identified with the smiDE overlap metric, than surrounding cells. 
+```{r}
+#| label: generate_tumor_heatmap
+#| message: false
+#| warning: false
+#| eval: false
+
+if(!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+if("LUM+ tumor" %in% seu.obj$minor_cell_type){
+  seu.obj$minor_cell_type <- dplyr::recode(
+    seu.obj@meta.data$minor_cell_type,
+    "LUM+ tumor" = "ITGB6+ tumor"
+  )
+}
+
+# Identify genes to consider with overlap metric
+overlap_metrics <- 
+smiDE::overlap_ratio_metric(assay_matrix = seu.obj@assays$RNA$data,
+                           metadata = meta,
+                           cluster_col = "major_cell_type",
+                           radius = 0.05,
+                           #split_neighbors_by_colname = "Run_Tissue_name",
+                           sdimx_col = "x_slide_mm",
+                           sdimy_col = "y_slide_mm"
+                           )
+tumor_genes <- overlap_metrics[major_cell_type=="Tumor" & ratio <= 1]$target
+
+## prepare data for marker gene heatmap:
+idx = which(seu.obj$major_cell_type == "Tumor")
+ct = "minor_cell_type"
+fc_subclus_ctl_gran <- clusterwise_foldchange_metrics(seu.obj[["RNA"]]@counts[tumor_genes,idx]
+                                                      ,metadata = seu.obj@meta.data[idx,]
+                                                      ,cluster_column = ct
+)
+# subtract background from the mean per-cluster expression profiles:
+negprobes = seu.obj@assays$negprobes$counts
+for (name in unique(seu.obj@meta.data[idx,ct])) {
+  if(is.na(name)){next}
+  isthiscelltype <- seu.obj@meta.data[idx,ct] == name
+  meannegthiscelltype <- Matrix::mean(negprobes[,idx][, isthiscelltype])
+  
+  fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] <- 
+    pmax(fc_subclus_ctl_gran$cluster_expr[fc_subclus_ctl_gran$cluster == name] - meannegthiscelltype, 0)
+}
+# create the heatmap:
+hm_lh <- marker_heatmap(fc_subclus_ctl_gran, topn = 6) +
+  theme(
+    legend.direction = "horizontal", # Arrange items within a legend horizontally
+    legend.position = "bottom",    # Place the entire legend box at the bottom
+    legend.box = "horizontal"      # Arrange multiple legend boxes horizontally
+  )
+
+png(filename = paste0(celltyping_dir, "/Plots/heatmap_", ct, "_tumorOnly_negRemoved.png"),
+    width = 8, height = 3, units = "in", res = 300)
+print(add_ncells(hm_lh))
+dev.off()
+```
+
+```{r}
+#| eval: true
+
+knitr::include_graphics(paste0(celltyping_dir, "/Plots/heatmap_", "minor_cell_type", "_tumorOnly_negRemoved.png"))
+```
