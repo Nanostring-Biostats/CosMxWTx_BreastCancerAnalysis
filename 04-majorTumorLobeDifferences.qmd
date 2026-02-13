@@ -1,0 +1,629 @@
+# Major tumor lobe differences
+
+In this section we look to identify the major transcriptional differences between tumor cells in the lower dense lobe and tumor cells in the upper interdigitated lobe of the tumor.
+
+```{r}
+#| label: loading preamble
+#| echo: false
+#| warning: false
+#| message: false
+source("./preamble.R")
+```
+
+## Identify tumor lobes
+We first manually define the two main regions of the tumor - the bottom dense, localized lobe as well as the upper interdigitated lobe. 
+
+Manually draw a polygon around the lower localized tumor lobe.
+```{r}
+#| label: identify_lower_lobe
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+# if there's no seurat object, read it in
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+if(is.null(results_list$lower_lobe_cells)){
+  
+  ## Select outermost ring of cells to consider
+  
+  # Define a polygon selection function
+  euclidean <- function(a, b) {
+    sqrt(sum((a - b)^2))
+  }
+  
+  select_polygon <- function(distmin = 0.01, max_points = 40){
+    message("Please select points to define a polygon.  Click to the first point to stop.  First point marker is largest.")
+    lims <- par("usr")
+    margins <- par("plt")
+    calcX <- function(x, limitss = lims, mars = margins) limitss[1] + ((x-mars[1])/(1-(1-mars[2])-mars[1]))*(limitss[2]-limitss[1])
+    calcY <- function(y, limitss = lims, mars = margins) limitss[3] + ((y-mars[3])/(1-(1-mars[4])-mars[3]))*(limitss[4]-limitss[3])
+    calcXY <- function(z) c(calcX(z[1]), calcY(z[2]))
+    
+    # determine diagonal distance in the plotting coordinate frame
+    diagonalDist <- euclidean(lims[c(1,3)], lims[c(2,4)])
+    
+    # select first and second point and third point
+    pg <- matrix(c(0,0), nrow = 1)
+    pg[1, ] <- calcXY(unlist(grid::grid.locator(unit = "npc")))
+    points(pg[1,1], pg[1,2], cex = 1, pch = 9, col = "magenta")
+    pg <- rbind(pg, calcXY(unlist(grid::grid.locator(unit = "npc"))))
+    points(pg[nrow(pg),1], pg[nrow(pg),2], cex = 0.5, pch = 9, col = "magenta")
+    pg <- rbind(pg, calcXY(unlist(grid::grid.locator(unit = "npc"))))
+    points(pg[nrow(pg),1], pg[nrow(pg),2], cex = 0.5, pch = 9, col = "magenta")
+    
+    #select additional points until a point is within the desired distance of the original point (or hit max_points limit)
+    while(euclidean(pg[nrow(pg),], pg[1,]) > distmin*diagonalDist){
+      pg <- rbind(pg, calcXY(unlist(grid::grid.locator(unit = "npc"))))
+      points(pg[nrow(pg),1], pg[nrow(pg),2], cex = 0.5, pch = 9, col = "magenta")
+      if(nrow(pg) > max_points) {
+        message("You reached the max allowed points.")
+        break
+      }
+    }
+    if(nrow(pg) > 3) pg <- pg[1:(nrow(pg)-1),]
+    polygon(pg[,1],pg[,2],col="#00000007",border="red")
+    return(pg)
+  }
+  
+  # Plot cells in bottom of tumor
+  plot(seu.obj@meta.data$x_slide_mm, 
+       seu.obj@meta.data$y_slide_mm, 
+       cex = 0.01, ylim = c(-0.5,6), 
+       asp=1, col = rgb(0,0,0,0.1))
+  
+  
+  # Select outer tumor edge polygon manually
+  pg_outer <- select_polygon()
+  
+  # which points are within the polygon
+  idx_selected <- mgcv::in.out(pg_outer, as.matrix(seu.obj@meta.data[,c("x_slide_mm","y_slide_mm")] ))
+  outer_cells <- seu.obj@meta.data$cell_id[idx_selected]
+  
+  # Add to results list
+  results_list$lower_lobe_cells <- outer_cells
+  saveRDS(results_list, results_list_file)
+}
+```
+
+
+Manually draw a polygon around the upper interdigitated tumor lobe.
+```{r}
+#| label: identify_upper_lobe
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+if(is.null(results_list$upper_lobe_cells)){
+    
+    ## Select outermost ring of cells to consider
+    
+    # Use function from above
+    
+    # Plot cells in upper region of slide
+    plot(seu.obj@meta.data$x_slide_mm, 
+         seu.obj@meta.data$y_slide_mm, 
+         cex = 0.01,  ylim = c(6,16),
+         asp=1, col = rgb(0,0,0,0.1))
+    
+    
+    # Select outer tumor edge polygon manually
+    pg_outer <- select_polygon()
+    
+    # which points are within the polygon
+    idx_selected <- mgcv::in.out(pg_outer, as.matrix(seu.obj@meta.data[,c("x_slide_mm","y_slide_mm")] ))
+    cells_in_upper <- seu.obj@meta.data$cell_id[idx_selected]
+  
+  # Add to results list
+  results_list$upper_lobe_cells <- cells_in_upper
+  saveRDS(results_list, results_list_file)
+}
+```
+
+Plot cells in upper and lower lobes individually or simultaneously.
+```{r}
+#| label: plot_tumor_lobes_xy
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+# Plot upper
+ggplot(seu.obj@meta.data,
+       aes(x = x_slide_mm, y = y_slide_mm)) +
+  geom_point(size = 0.01, color = "light grey", alpha = 0.1) +
+  geom_point(data = seu.obj@meta.data[results_list$upper_lobe_cells,],
+             aes(x = x_slide_mm, y = y_slide_mm),
+             size = 0.01, color = "tomato3", alpha = 0.2) +
+  theme_classic() +
+  coord_fixed() +
+  ggtitle("Cells in the upper lobulated region") +
+  theme(plot.title = element_text(hjust = 0.5))
+ggsave(filename = paste0(tumorDE_dir, "/Plots/XY_upperLobe.png"),
+         width = 16, height = 16, units = "in")
+
+# Plot lower
+ggplot(seu.obj@meta.data,
+       aes(x = x_slide_mm, y = y_slide_mm)) +
+  geom_point(size = 0.01, color = "light grey", alpha = 0.1) +
+  geom_point(data = seu.obj@meta.data[results_list$lower_lobe_cells,],
+             aes(x = x_slide_mm, y = y_slide_mm),
+             size = 0.01, color = "lightskyblue3", alpha = 0.2) +
+  theme_classic() +
+  coord_fixed() +
+  ggtitle("Cells in the lower localized region") +
+  theme(plot.title = element_text(hjust = 0.5))
+ggsave(filename = paste0(tumorDE_dir, "/Plots/XY_lowerLobe.png"),
+         width = 16, height = 16, units = "in")
+
+# Plot both together
+ggplot(seu.obj@meta.data,
+       aes(x = x_slide_mm, y = y_slide_mm)) +
+  geom_point(size = 0.01, color = "light grey", alpha = 0.1) +
+  geom_point(data = seu.obj@meta.data[results_list$lower_lobe_cells,],
+             aes(x = x_slide_mm, y = y_slide_mm),
+             size = 0.01, color = "lightskyblue3", alpha = 0.2) +
+  geom_point(data = seu.obj@meta.data[results_list$upper_lobe_cells,],
+             aes(x = x_slide_mm, y = y_slide_mm),
+             size = 0.01, color = "tomato3", alpha = 0.2) +
+  theme_classic() +
+  coord_fixed() +
+  ggtitle("Cells in the two tumor lobes") +
+  theme(plot.title = element_text(hjust = 0.5))
+ggsave(filename = paste0(tumorDE_dir, "/Plots/XY_bothLobes.png"),
+         width = 16, height = 16, units = "in")
+
+
+```
+
+Spatial plots of major lobes.
+
+:::{.panel-tabset}
+
+### Both lobes
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/XY_bothLobes.png"))
+```
+
+### Lower lobe
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/XY_lowerLobe.png"))
+```
+
+### Upper lobe
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/XY_upperLobe.png"))
+```
+
+:::
+
+## Contrast tumor lobes - cell types
+
+As a next basic step, we show cell type distributions in each lobe.
+```{r}
+#| label: plot_cell_type_fractions_by_lobe
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+# Isolate meta for plotting
+meta <- seu.obj@meta.data
+
+# Add lobe assignments
+meta$lobe <- "none"
+meta[results_list$upper_lobe_cells, "lobe"] <- "Upper"
+meta[results_list$lower_lobe_cells, "lobe"] <- "Lower"
+
+# Plot cell types by lobe
+ggplot(meta[which(meta$lobe != "none"),], 
+       aes(x = minor_cell_type)) +
+  geom_bar(aes(fill = minor_cell_type), color = "black") +
+  scale_fill_manual(values = results_list$minor_cell_type_color_pal, name = "Cell Type") +
+  xlab("Cell Type") +
+  theme_classic() +
+  theme(axis.text.x = element_blank()) +
+  ylab("Total cells") +
+  facet_wrap(~lobe)
+ggsave(filename = paste0(tumorDE_dir, "/Plots/Barplot_cellsPerCellType_byLobe.png"),
+       width = 16, height = 8, unit = "in")
+
+
+```
+
+
+The major tumor type contributing to the top tumor are HPD+ tumor. In contrast, the major tumor type in the bottom tumor are KRT16+ and proliferating tumor.
+
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/Barplot_cellsPerCellType_byLobe.png"))
+```
+
+## Contrast tumor lobes - differential expression
+
+We use differential expression to contrast tumor cells in the two lobes, using only genes that are more likely to be expressed in tumor cells than surrounding cells (ie are unlikely to be present simply due to tumor cells overlapping with non-tumor cells at their borders).
+
+```{r}
+#| label: runDE_tumorLobes_tumorGenes
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+if (!("seu.obj" %in% ls())){
+  seu.obj <- readRDS(results_list$seurat_file_postCellTyping)
+}
+
+# Isolate meta for plotting
+meta <- seu.obj@meta.data
+
+# Add lobe assignments
+meta$lobe <- "none"
+meta[results_list$upper_lobe_cells, "lobe"] <- "Upper"
+meta[results_list$lower_lobe_cells, "lobe"] <- "Lower"
+
+## Run DE between tumor lobes on tumor cells only
+
+# Pre-de find neighbors
+pre_de_obj <- pre_de(
+  metadata = meta,
+  cell_type_metadata_colname = "major_cell_type",
+  mm_radius = 0.05,
+  sdimx_colname = "x_slide_mm",
+  sdimy_colname = "y_slide_mm",
+  verbose = TRUE,
+  adjacencies_only = TRUE
+)
+
+# Add total counts to metadata as DE expects
+meta$totalcounts = meta$nCount_RNA
+
+# Use overlap metric to identify genes to test
+overlap_metrics <- 
+smiDE::overlap_ratio_metric(assay_matrix = seu.obj@assays$RNA$data,
+                           metadata = meta,
+                           cluster_col = "major_cell_type",
+                           radius = 0.05,
+                           #split_neighbors_by_colname = "Run_Tissue_name",
+                           sdimx_col = "x_slide_mm",
+                           sdimy_col = "y_slide_mm"
+                           )
+
+# Save overlap metrics
+saveRDS(overlap_metrics, file = paste0(tumorDE_dir, "/Data/overlap_metrics.rds"))
+
+# Only analyze genes with ratio less than or equal to 1
+analysis_genes <- overlap_metrics[major_cell_type=="Tumor" & ratio <= 1]$target
+
+# DE test dependence on tumor lobe
+de_obj <- smi_de(
+  assay_matrix = seu.obj@assays$RNA@counts[analysis_genes,],
+  metadata = meta[which(meta[,"major_cell_type"] == "Tumor"),],
+  formula = ~RankNorm(otherct_expr) + lobe + offset(log(totalcounts)),
+  pre_de_obj = pre_de_obj,
+  groupVar = "lobe",
+  neighbor_expr_cell_type_metadata_colname = "major_cell_type",
+  neighbor_expr_totalcount_normalize = TRUE,
+  neighbor_expr_totalcount_scalefactor = NULL,
+  family = "nbinom2",
+  targets = analysis_genes,
+  nCores = 20
+)
+
+# Save objects
+saveRDS(pre_de_obj, file = paste0(tumorDE_dir, "/Data/pre_de_obj.rds"))
+saveRDS(de_obj, file = paste0(tumorDE_dir, "/Data/de_obj_tumorGenes.rds"))
+```
+
+With the major differences between tumor cells in the two lobes, we first generate a volcano plot to visually demonstrate the vast differences between these two lobes. Also save these results to a table.
+```{r}
+#| label: plotDE_tumorLobes_tumorGenes
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+# Read in DE object
+de_obj <- readRDS(paste0(tumorDE_dir, "/Data/de_obj_tumorGenes.rds"))
+
+# Extract pairwise results, invasive vs localized lobe
+pairwise.df <- results(de_obj, "pairwise")$pairwise
+pairwise.df <- pairwise.df %>% filter(term == "lobe") %>%
+  filter(contrast == "Lower / Upper")
+
+# Convert terminology to Dense / Interdigitated
+pairwise.df$contrast <- gsub("Lower / Upper", "Dense / Interdigitated", pairwise.df$contrast)
+
+# Adjust p-value
+pairwise.df$p.adj <- p.adjust(pairwise.df$p.value, method = "fdr")
+
+# Save pairwise results to a table to be included as supplementary information.
+write.csv(as.data.frame(pairwise.df)[,c(setdiff(colnames(pairwise.df), c("df", "null", "fold_change")))],
+          file = paste0(tumorDE_dir, "/Data/TumorLobeDE_table.csv"),
+          row.names = FALSE)
+
+# Plot it, partially following smiDE volcano code
+# Ensure that the lower lobe is plotted on the left to align with tissue image
+
+# Extract comparison
+cc = pairwise.df$contrast[1]
+compv = compv <- strsplit(as.character(cc), "\\ vs.\\ ")[[1]]
+if(grepl(" [\\/-]\\ ", cc)) compv <- strsplit(as.character(cc), "\\ [\\/-]\\ ")[[1]]
+
+# x labels
+xrng <- pairwise.df[!is.na(log2(fold_change)),c(min(-log2(fold_change)),max(-log2(fold_change)))]
+xrng <- c(-max(abs(xrng)), max(abs(xrng)))
+xrng <- pretty(xrng)
+
+# Set up y labels
+nDigits <- function(x) suppressWarnings(as.integer(strsplit(x = formatC(formatC(x = x, format="e"), format = "s"), split = "e")[[1]][2]))
+bonf<- pairwise.df[,0.05/(uniqueN(target) * uniqueN(contrast))]
+max.y <- nDigits(min(pairwise.df[,min(p.value)+10^-300], signif(bonf / 2, 1)))
+
+ybrk <- 1 * 10^pretty( c(-1:(max.y)) )
+ylab <- ybrk
+
+# Add coloring
+fc_cutoff = 0.5
+pairwise.df$sig_group = paste0("P adj > 0.05\nand/or\nlog2FC < ", fc_cutoff)
+pairwise.df$sig_group[intersect(which(pairwise.df$p.adj < 0.05),
+                                which(log2(pairwise.df$fold_change) > fc_cutoff))] <- compv[1]
+pairwise.df$sig_group[intersect(which(pairwise.df$p.adj < 0.05),
+                                which(log2(pairwise.df$fold_change) < -fc_cutoff))] <- compv[2]
+my_cols = c("tomato3", "lightskyblue3", "lightgrey")
+names(my_cols) = c("Interdigitated",
+                   "Dense",
+                   paste0("P adj > 0.05\nand/or\nlog2FC < ", fc_cutoff))
+
+ggplot(pairwise.df,
+       aes(x = -log2(fold_change), y = p.value + 10^-300)) + # Negative log fold change switches the L/R order of upper / lower
+  geom_hline(yintercept = 0.05, linetype = 2) +
+  geom_vline(xintercept = fc_cutoff, linetype = 2) +
+  geom_vline(xintercept = -fc_cutoff, linetype = 2) +
+  geom_point(aes(color = sig_group), size = 0.6) +
+  scale_color_manual(values = my_cols, name = "Significance group") +
+  scale_y_continuous(trans = smiDE:::change_axis_revlog_trans(base=10),
+                     breaks = ybrk,
+                     labels = formatC(ylab, format = "e", digits = 0)) +
+  scale_x_continuous(breaks = xrng, limits = range(xrng)) +
+  theme_bw() +
+  ylab("p value") +
+  xlab(paste0(compv[1], " ", sprintf('\u2190'), " log", sprintf('\u2082'), "(FC) ", sprintf('\u2192'), " ", compv[2]) ) + # Compv 1 and 2 are switched in order from usual to account for L/R switch of categories
+  geom_text(data = pairwise.df[1,], aes(label = paste0(sum(pairwise.df$sig_group == "Interdigitated"), "\ngenes"), 
+                                        x = min(abs(max(xrng)), abs(min(xrng)))*0.75, y = sqrt(min(ybrk))),
+            color = my_cols[["Interdigitated"]], size = 8) +
+  geom_text(data = pairwise.df[1,], aes(label = paste0(sum(pairwise.df$sig_group == "Dense"), "\ngenes"), 
+                                        x = -min(abs(max(xrng)), abs(min(xrng)))*0.75, y = sqrt(min(ybrk))),
+            color = my_cols[["Dense"]], size = 8) +
+  guides(color = guide_legend(override.aes = list(size = 5)))
+ggsave(filename = paste0(tumorDE_dir, "/Plots/volcano_lobeDifferences_tumorGenes.png"),
+       width = 6, height = 4, units = "in")
+
+```
+
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/volcano_lobeDifferences_tumorGenes.png"))
+```
+
+
+Next, we show the 20 genes with the largest fold change between these two lobes.
+
+```{r}
+#| label: gather_topDEgenes_tumorGenes
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+# Read in DE object
+de_obj <- readRDS(paste0(tumorDE_dir, "/Data/de_obj_tumorGenes.rds"))
+
+# Extract pairwise results, invasive vs localized lobe
+pairwise.df <- results(de_obj, "pairwise")$pairwise
+pairwise.df <- pairwise.df %>% filter(term == "lobe") %>%
+  filter(contrast == "Lower / Upper")
+
+# Extract 20 genes with top FC
+top_upper <- pairwise.df %>%
+  arrange(p.value, -abs(log2(fold_change))) %>%
+  filter(fold_change < 1) %>%
+  head(20) %>%
+  select(target, contrast, fold_change, p.value, modelest_cpc_1, modelest_cpc_2)
+
+top_lower <- pairwise.df %>%
+  arrange(p.value, -abs(log2(fold_change))) %>%
+  filter(fold_change > 1) %>%
+  head(20) %>%
+  select(target, contrast, fold_change, p.value, modelest_cpc_1, modelest_cpc_2)
+
+# Add to results
+results_list$top_upper_DE_tumGenes <- top_upper
+results_list$top_lower_DE_tumGenes <- top_lower
+saveRDS(results_list, results_list_file)
+```
+
+Top genes in the localized bottom tumor:
+```{r}
+knitr::kable(results_list$top_lower_DE_tumGenes)
+```
+
+Top genes in the interdigitated top tumor:
+```{r}
+knitr::kable(results_list$top_upper_DE_tumGenes)
+```
+
+We use ReactomePA to identify pathways enriched in the set of genes up in the interdigitated lobe and in the localized lobe.
+
+```{r}
+#| label: pathways_by_lobe_tumGenes
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+# Read in DE object
+de_obj <- readRDS(paste0(tumorDE_dir, "/Data/de_obj_tumorGenes.rds"))
+
+# Extract pairwise results, invasive vs localized lobe
+pairwise.df <- results(de_obj, "pairwise")$pairwise
+pairwise.df <- pairwise.df %>% filter(term == "lobe") %>%
+  filter(contrast == "Lower / Upper")
+
+# Convert terminology to Dense / Interdigitated
+pairwise.df$contrast <- gsub("Lower / Upper", "Dense / Interdigitated", pairwise.df$contrast)
+
+# Find pathways enriched in each lobe, working only with those with p.adj < 0.05
+# and log2fc > 0.5
+
+# Adjust p-value
+pairwise.df$p.adj <- p.adjust(pairwise.df$p.value, method = "fdr")
+
+# Find gene sets
+upper_genes <- pairwise.df %>%
+  filter(p.adj < 0.05) %>%
+  filter(log2(fold_change) < -0.5) %>%
+  select(target)
+
+lower_genes <- pairwise.df %>%
+  filter(p.adj < 0.05) %>%
+  filter(log2(fold_change) > 0.5) %>%
+  select(target)
+
+pathway_res <- list()
+for (i in c("upper_genes", "lower_genes")){
+  print(paste0("Top pathways in set ", i, ":"))
+  gene_ids <- bitr(get(i)$target, "SYMBOL", "ENTREZID", org.Hs.eg.db)
+  enrich_result1 <- enrichPathway(gene = gene_ids$ENTREZID,
+                                  organism = "human")
+  pathway_res[i] <- enrich_result1
+  print(enrich_result1@result[1:10, c("Description", "FoldEnrichment", "qvalue")])
+}
+
+# Save pathway results
+saveRDS(pathway_res, file = paste0(tumorDE_dir, "/Data/pathwayEnrichmentResults_tumorGenes.rds"))
+
+# Also save top pathways to results file
+results_list$top_upper_pathways_tumGenes <- pathway_res[["upper_genes"]]@result %>%
+  filter(qvalue < 0.05) %>%
+  select("Description", "FoldEnrichment", "qvalue")
+results_list$top_lower_pathways_tumGenes <- pathway_res[["lower_genes"]]@result %>%
+  filter(qvalue < 0.05) %>%
+  select("Description", "FoldEnrichment", "qvalue")
+saveRDS(results_list, results_list_file)
+```
+
+Top pathways enriched in the localized bottom tumor:
+```{r}
+knitr::kable(results_list$top_lower_pathways_tumGenes)
+```
+
+Top pathways enriched in the interdigitated top tumor:
+```{r}
+knitr::kable(results_list$top_upper_pathways_tumGenes)
+```
+
+Plot top pathways enriched as a bar plot.
+```{r}
+#| label: plot_pathways_by_lobe_tumGenes
+#| echo: true
+#| warning: false
+#| message: false
+#| eval: false
+
+# Read in pathway results
+pathway_res <- readRDS(file = paste0(tumorDE_dir, "/Data/pathwayEnrichmentResults_tumorGenes.rds"))
+
+# Merge top enriched pathways
+enrich_paths <- rbind(pathway_res$upper_genes@result,
+                      pathway_res$lower_genes@result)
+enrich_paths$direction <- c(rep("upper", nrow(pathway_res$upper_genes@result)),
+                            rep("lower", nrow(pathway_res$lower_genes@result)))
+
+
+# Filter data frame for p.adjust < 0.1
+df_filtered <- enrich_paths %>% filter(p.adjust < 0.1)
+
+# Add a column for bar length based on direction
+df_filtered <- df_filtered %>%
+ mutate(bar_length = ifelse(direction == "upper", FoldEnrichment, -FoldEnrichment),
+ color = ifelse(direction == "upper", -log10(p.adjust), -log10(p.adjust)))
+
+
+# Arrange data frame by Fold Enrichment from highest to lowest
+df_filtered <- df_filtered %>% arrange(desc(bar_length))
+
+
+# Select top 5 in each direction by absolute bar length
+df_top <- df_filtered %>%
+  mutate(abs_length = abs(bar_length)) %>%
+  group_by(direction) %>%
+  slice_max(order_by = abs_length, n = 5, with_ties = FALSE) %>%
+  ungroup()
+
+# Convert lobe terminology
+df_top$direction <- gsub("lower", "Dense", df_top$direction)
+df_top$direction <- gsub("upper", "Interdigitated", df_top$direction)
+
+
+# Custom shorten a few pathway names for plotting
+df_top$Description <- dplyr::recode(df_top$Description,
+                                    "Modulation of host responses by IFN-stimulated genes" = "*Modulation by IFN",
+                                    "Deposition of new CENPA-containing nucleosomes at the centromere" = "*Nucleosome deposition",
+                                    "alpha-linolenic (omega3) and linoleic (omega6) acid metabolism" = "*ALA (omega3) and LA (omega6) metabolism")
+
+# Create the plot
+ggplot(df_top, aes(x = reorder(Description, bar_length), y = bar_length, fill = direction)) +
+ geom_bar(stat = "identity") +
+ scale_fill_manual(values = c("Dense" = "lightskyblue3", "Interdigitated" = "tomato3")) +
+ coord_flip() +
+ theme_minimal() +
+ labs(y = "Fold Enrichment", x = "Pathway", fill = "Lobe") +
+ theme(axis.text.y = element_text(size = 12),
+ axis.text.x = element_text(size = 12),
+ axis.title.y = element_text(size = 14),
+ axis.title.x = element_text(size = 14),
+ legend.text = element_text(size = 14),
+ legend.title = element_text(size = 20))
+ggsave(filename = paste0(tumorDE_dir, "/Plots/barplot_pathwayEnrichmentByLobe_tumorGenes.png"),
+       width = 12, height = 4, units = "in")
+```
+
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/barplot_pathwayEnrichmentByLobe.png"))
+```
+
+## Publication Quality Plots
+
+In this final section we re-show the high quality plots that appear in the manuscript.
+
+Spatial localization of the two manually drawn lobes:
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/XY_bothLobes.png"))
+```
+
+Volcano plot of major lobe differences:
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/volcano_lobeDifferences_tumorGenes.png"))
+```
+
+Bar plot of top pathways per lobe:
+```{r}
+knitr::include_graphics(paste0(tumorDE_dir, "/Plots/barplot_pathwayEnrichmentByLobe.png"))
+```
+
+
